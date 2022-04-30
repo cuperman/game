@@ -83,6 +83,7 @@ class Mario {
   public vy: number;
 
   private sprites: ImageBitmap;
+  private frame: number;
 
   constructor(sprites: ImageBitmap) {
     this.sprites = sprites;
@@ -91,21 +92,138 @@ class Mario {
     this.y = 0;
     this.vx = 0;
     this.vy = 0;
+
+    this.frame = 0;
   }
 
   render(context: CanvasRenderingContext2D) {
-    const spriteX = 0;
-    const spriteY = 8;
-
     const width = 16;
     const height = 16;
 
-    context.drawImage(this.sprites, spriteX, spriteY, width, height, this.x, this.y, width, height);
+    if (this.vy > 0 && this.vx === 0) {
+      // falling
+      context.drawImage(this.sprites, 116, 8, width, height, this.x, this.y, width, height);
+    } else if (this.vx < 0) {
+      // run left
+      if (this.frame === 0) {
+        context.drawImage(this.sprites, 20, 8, width, height, this.x, this.y, width, height);
+        this.frame = 1;
+      } else if (this.frame === 1) {
+        context.drawImage(this.sprites, 38, 8, width, height, this.x, this.y, width, height);
+        this.frame = 2;
+      } else {
+        context.drawImage(this.sprites, 56, 8, width, height, this.x, this.y, width, height);
+        this.frame = 0;
+      }
+    } else if (this.vx > 0) {
+      // run right
+      if (this.frame === 0) {
+        context.drawImage(this.sprites, 20, 8, width, height, this.x, this.y, width, height);
+        this.frame = 1;
+      } else if (this.frame === 1) {
+        context.drawImage(this.sprites, 38, 8, width, height, this.x, this.y, width, height);
+        this.frame = 2;
+      } else {
+        context.drawImage(this.sprites, 56, 8, width, height, this.x, this.y, width, height);
+        this.frame = 0;
+      }
+    } else {
+      // standing
+      context.drawImage(this.sprites, 0, 8, width, height, this.x, this.y, width, height);
+    }
+  }
+
+  toString() {
+    const { x, y, vx, vy } = this;
+    JSON.stringify({ x, y, vx, vy });
+  }
+}
+
+class Controller {
+  public up: boolean;
+  public down: boolean;
+  public left: boolean;
+  public right: boolean;
+
+  constructor() {
+    this.up = false;
+    this.down = false;
+    this.left = false;
+    this.right = false;
+  }
+
+  onKeyUp(event: KeyboardEvent) {
+    switch (event.key) {
+      case 'ArrowUp':
+        this.up = false;
+        break;
+      case 'ArrowDown':
+        this.down = false;
+        break;
+      case 'ArrowLeft':
+        this.left = false;
+        break;
+      case 'ArrowRight':
+        this.right = false;
+        break;
+    }
+  }
+
+  onKeyDown(event: KeyboardEvent) {
+    switch (event.key) {
+      case 'ArrowUp':
+        this.up = true;
+        break;
+      case 'ArrowDown':
+        this.down = true;
+        break;
+      case 'ArrowLeft':
+        this.left = true;
+        break;
+      case 'ArrowRight':
+        this.right = true;
+        break;
+    }
+  }
+
+  render(context: CanvasRenderingContext2D) {
+    context.fillStyle = 'white';
+    context.strokeStyle = 'white';
+
+    // Up
+    if (this.up) {
+      context.fillRect(320 - 10 * 2, 0, 10, 10);
+    } else {
+      context.strokeRect(320 - 10 * 2, 0, 10, 10);
+    }
+
+    // Down
+    if (this.down) {
+      context.fillRect(320 - 10 * 2, 10, 10, 10);
+    } else {
+      context.strokeRect(320 - 10 * 2, 10, 10, 10);
+    }
+
+    // Left
+    if (this.left) {
+      context.fillRect(320 - 10 * 3, 10, 10, 10);
+    } else {
+      context.strokeRect(320 - 10 * 3, 10, 10, 10);
+    }
+
+    // Right
+    if (this.right) {
+      context.fillRect(320 - 10 * 1, 10, 10, 10);
+    } else {
+      context.strokeRect(320 - 10 * 1, 10, 10, 10);
+    }
   }
 }
 
 class Game {
   public canvas: Canvas;
+  public controller: Controller;
+
   private stage: Stage;
   private mario: Mario;
 
@@ -114,17 +232,34 @@ class Game {
 
     this.stage = new Stage(stageAsset);
     this.mario = new Mario(marioSprites);
+    this.controller = new Controller();
+  }
+
+  processInput() {
+    if (this.controller.down) {
+    } else if (this.controller.right) {
+      this.mario.vx = 5;
+    } else if (this.controller.left) {
+      this.mario.vx = -5;
+    } else {
+      this.mario.vx = 0;
+    }
   }
 
   applyPhysics() {
     const groundLevel = 192;
 
-    // apply acceleration
+    // apply gravity
     if (this.mario.y < groundLevel) {
       this.mario.vy = this.mario.vy + 8;
+    } else {
+      this.mario.vy = 0;
     }
 
     // move objects
+    if (this.mario.vx !== 0) {
+      this.mario.x = this.mario.x + this.mario.vx;
+    }
     if (this.mario.vy !== 0) {
       this.mario.y = this.mario.y + this.mario.vy;
     }
@@ -140,6 +275,7 @@ class Game {
 
     this.stage.render(context);
     this.mario.render(context);
+    this.controller.render(context);
   }
 
   async start() {
@@ -150,6 +286,7 @@ class Game {
     while (true) {
       const start = new Date().getTime();
 
+      this.processInput();
       this.applyPhysics();
       this.render();
 
@@ -171,6 +308,8 @@ async function main() {
   const game = new Game(stageAsset, marioSprites);
 
   document.body.appendChild(game.canvas.element);
+  document.body.addEventListener('keyup', (event) => game.controller.onKeyUp(event));
+  document.body.addEventListener('keydown', (event) => game.controller.onKeyDown(event));
 
   game.start();
 }
