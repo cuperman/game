@@ -1,3 +1,9 @@
+interface Color {
+  readonly r: number;
+  readonly g: number;
+  readonly b: number;
+}
+
 class Canvas {
   public element: HTMLCanvasElement;
 
@@ -24,6 +30,30 @@ async function loadImage(url: string): Promise<ImageBitmap> {
       reject();
     });
   });
+}
+
+async function applyAlpha(imageBitmap: ImageBitmap, alphaColor: Color): Promise<ImageBitmap> {
+  const { width, height } = imageBitmap;
+
+  const tempCanvas = new Canvas(width, height);
+  const context = tempCanvas.get2DContext();
+  context.drawImage(imageBitmap, 0, 0);
+
+  const imageData = context.getImageData(0, 0, width, height);
+  const alteredData = imageData.data.map((datum, index, data) => {
+    if ((index + 1) % 4 === 0) {
+      const r = data[index - 3];
+      const g = data[index - 2];
+      const b = data[index - 1];
+
+      if (r === alphaColor.r && g === alphaColor.g && b === alphaColor.b) {
+        return 0;
+      }
+    }
+    return datum;
+  });
+
+  return createImageBitmap(new ImageData(alteredData, width, height));
 }
 
 async function sleep(duration: number) {
@@ -92,8 +122,10 @@ class Game {
 }
 
 async function main() {
+  const marioSpriteAlpha = { r: 146, g: 144, b: 255 };
+
   const stageAsset = await loadImage('./img/stage1.png');
-  const marioSprites = await loadImage('./img/mario.png');
+  const marioSprites = await loadImage('./img/mario.png').then((image) => applyAlpha(image, marioSpriteAlpha));
 
   const game = new Game(stageAsset, marioSprites);
 
