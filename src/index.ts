@@ -77,10 +77,20 @@ class Stage {
 }
 
 class Mario {
+  public x: number;
+  public y: number;
+  public vx: number;
+  public vy: number;
+
   private sprites: ImageBitmap;
 
   constructor(sprites: ImageBitmap) {
     this.sprites = sprites;
+
+    this.x = 0;
+    this.y = 0;
+    this.vx = 0;
+    this.vy = 0;
   }
 
   render(context: CanvasRenderingContext2D) {
@@ -90,10 +100,7 @@ class Mario {
     const width = 16;
     const height = 16;
 
-    const canvasX = 0;
-    const canvasY = 0;
-
-    context.drawImage(this.sprites, spriteX, spriteY, width, height, canvasX, canvasY, width, height);
+    context.drawImage(this.sprites, spriteX, spriteY, width, height, this.x, this.y, width, height);
   }
 }
 
@@ -109,6 +116,25 @@ class Game {
     this.mario = new Mario(marioSprites);
   }
 
+  applyPhysics() {
+    const groundLevel = 192;
+
+    // apply acceleration
+    if (this.mario.y < groundLevel) {
+      this.mario.vy = this.mario.vy + 8;
+    }
+
+    // move objects
+    if (this.mario.vy !== 0) {
+      this.mario.y = this.mario.y + this.mario.vy;
+    }
+
+    // apply collisions
+    if (this.mario.y > groundLevel) {
+      this.mario.y = groundLevel;
+    }
+  }
+
   render() {
     const context = this.canvas.get2DContext();
 
@@ -117,7 +143,22 @@ class Game {
   }
 
   async start() {
-    this.render();
+    const targetFrameRate = 30;
+    const maxDelay = 1000 / targetFrameRate;
+
+    // start game loop
+    while (true) {
+      const start = new Date().getTime();
+
+      this.applyPhysics();
+      this.render();
+
+      const end = new Date().getTime();
+      const delay = maxDelay - (end - start);
+      if (delay > 0) {
+        await sleep(delay);
+      }
+    }
   }
 }
 
