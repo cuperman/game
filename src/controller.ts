@@ -1,3 +1,5 @@
+import { Screen } from './screen';
+
 export class Controller {
   public up: boolean;
   public down: boolean;
@@ -45,36 +47,39 @@ export class Controller {
     }
   }
 
-  render(context: CanvasRenderingContext2D) {
-    context.fillStyle = 'white';
-    context.strokeStyle = 'white';
+  render(screen: Screen) {
+    const color = 'white';
 
-    // Up
+    const btnW = 10; // button width
+    const btnH = 10; // button height
+
+    // up outline
+    screen.drawRectangle(screen.width - btnW * 2, btnH * 0, btnW, btnH, { color });
+    // down outline
+    screen.drawRectangle(screen.width - btnW * 2, btnH * 1, btnW, btnH, { color });
+    // left outline
+    screen.drawRectangle(screen.width - btnW * 3, btnH * 1, btnW, btnH, { color });
+    // right outline
+    screen.drawRectangle(screen.width - btnW * 1, btnH * 1, btnW, btnH, { color });
+
+    // up fill
     if (this.up) {
-      context.fillRect(320 - 10 * 2, 0, 10, 10);
-    } else {
-      context.strokeRect(320 - 10 * 2, 0, 10, 10);
+      screen.drawRectangle(screen.width - btnW * 2, btnH * 0, btnW, btnH, { color, fill: true });
     }
 
-    // Down
+    // down fill
     if (this.down) {
-      context.fillRect(320 - 10 * 2, 10, 10, 10);
-    } else {
-      context.strokeRect(320 - 10 * 2, 10, 10, 10);
+      screen.drawRectangle(screen.width - btnW * 2, btnH * 1, btnW, btnH, { color, fill: true });
     }
 
-    // Left
+    // left fill
     if (this.left) {
-      context.fillRect(320 - 10 * 3, 10, 10, 10);
-    } else {
-      context.strokeRect(320 - 10 * 3, 10, 10, 10);
+      screen.drawRectangle(screen.width - btnW * 3, btnH * 1, btnW, btnH, { color, fill: true });
     }
 
-    // Right
+    // right fill
     if (this.right) {
-      context.fillRect(320 - 10 * 1, 10, 10, 10);
-    } else {
-      context.strokeRect(320 - 10 * 1, 10, 10, 10);
+      screen.drawRectangle(screen.width - btnW * 1, btnH * 1, btnW, btnH, { color, fill: true });
     }
   }
 }

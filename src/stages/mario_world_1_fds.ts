@@ -2,15 +2,8 @@ import { Stage } from './stage';
 import { loadImage } from '../lib';
 import { Screen } from '../screen';
 
-export class MarioWorld1Fds implements Stage {
-  public width: number;
-  public height: number;
-
+export class MarioWorld1Fds extends Stage {
   private asset: ImageBitmap;
-
-  constructor() {
-    return;
-  }
 
   async load() {
     const asset = await loadImage('/img/mario-world-1-fds.png');

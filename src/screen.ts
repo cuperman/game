@@ -1,5 +1,11 @@
 import { Canvas } from './lib';
 
+export interface RectangleOptions {
+  readonly color?: string;
+  readonly offset?: boolean;
+  readonly fill?: boolean;
+}
+
 export class Screen {
   public canvas: Canvas;
   public xOffset: number;
@@ -17,6 +23,19 @@ export class Screen {
 
     this.canvas = new Canvas(this.width, this.height);
     this.context = this.canvas.get2DContext();
+  }
+
+  drawRectangle(x: number, y: number, w: number, h: number, options: RectangleOptions = {}) {
+    const rectX = options.offset ? x - this.xOffset : x;
+    const rectY = options.offset ? y - this.yOffset : y;
+
+    if (options.fill) {
+      this.context.fillStyle = options.color ? options.color : 'black';
+      this.context.fillRect(rectX, rectY, w, h);
+    } else {
+      this.context.strokeStyle = options.color ? options.color : 'black';
+      this.context.strokeRect(rectX, rectY, w, h);
+    }
   }
 
   drawBackground(image: CanvasImageSource) {

@@ -2,19 +2,11 @@ import { Character } from './character';
 import { loadImage, applyAlpha } from '../lib';
 import { Screen } from '../screen';
 
-export class Tester implements Character {
-  public x: number;
-  public y: number;
-  public vx: number;
-  public vy: number;
-
+export class Tester extends Character {
   private sprites: ImageBitmap;
 
-  constructor() {
-    this.x = 100;
-    this.y = 0;
-    this.vx = 0;
-    this.vy = 0;
+  constructor(x: number, y: number) {
+    super(x, y);
   }
 
   async load() {
@@ -28,17 +20,5 @@ export class Tester implements Character {
     const height = 16;
 
     screen.drawSpriteFlipped(this.sprites, 0, 8, width, height, this.x, this.y, width, height);
-  }
-
-  runLeft() {
-    return;
-  }
-
-  runRight() {
-    return;
-  }
-
-  stop() {
-    return;
   }
 }

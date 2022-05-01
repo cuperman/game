@@ -1,49 +1,19 @@
-import { Character } from './character';
+import { Character, CharacterDirection } from './character';
 import { loadImage, applyAlpha } from '../lib';
 import { Screen } from '../screen';
 
-export enum Direction {
-  LEFT = 'LEFT',
-  RIGHT = 'RIGHT',
-}
-
-export class Mario implements Character {
-  public x: number;
-  public y: number;
-  public vx: number;
-  public vy: number;
-
+export class Mario extends Character {
   private sprites: ImageBitmap;
   private frame: number;
-  private direction: Direction;
 
   constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-    this.vx = 0;
-    this.vy = 0;
-
-    this.frame = 0;
+    super(x, y);
   }
 
   async load() {
     const alphaColor = { r: 146, g: 144, b: 255 };
     const sprites = await loadImage('/img/mario-sprites.png').then((image) => applyAlpha(image, alphaColor));
     this.sprites = sprites;
-  }
-
-  runRight() {
-    this.direction = Direction.RIGHT;
-    this.vx = 5;
-  }
-
-  runLeft() {
-    this.direction = Direction.LEFT;
-    this.vx = -5;
-  }
-
-  stop() {
-    this.vx = 0;
   }
 
   render(screen: Screen) {
@@ -77,17 +47,12 @@ export class Mario implements Character {
         screen.drawSprite(this.sprites, 56, 8, width, height, this.x, this.y, width, height);
         this.frame = 0;
       }
-    } else if (this.direction === Direction.LEFT) {
+    } else if (this.direction === CharacterDirection.LEFT) {
       // standing facing left
       screen.drawSpriteFlipped(this.sprites, 0, 8, width, height, this.x, this.y, width, height);
     } else {
       // standing facing right
       screen.drawSprite(this.sprites, 0, 8, width, height, this.x, this.y, width, height);
     }
-  }
-
-  toString(): string {
-    const { x, y, vx, vy } = this;
-    return JSON.stringify({ x, y, vx, vy });
   }
 }

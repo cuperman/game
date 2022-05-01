@@ -1,6 +1,6 @@
-import { Character, Mario } from './characters';
+import { ICharacter, Mario } from './characters';
 import { Controller } from './controller';
-import { Stage, MarioWorld11 } from './stages';
+import { IStage, MarioWorld11 } from './stages';
 import { sleep, Logger } from './lib';
 import { Screen } from './screen';
 
@@ -8,8 +8,8 @@ export class Game {
   public controller: Controller;
   public screen: Screen;
 
-  private stage: Stage;
-  private character: Character;
+  private stage: IStage;
+  private character: ICharacter;
   private logger: Logger;
 
   constructor() {
@@ -77,11 +77,9 @@ export class Game {
     this.logger.diff('screen', this.screen.toString());
     this.logger.diff('character ', this.character.toString());
 
-    const context = this.screen.canvas.get2DContext();
-
     this.stage.render(this.screen);
     this.character.render(this.screen);
-    this.controller.render(context);
+    this.controller.render(this.screen);
   }
 
   async start() {
