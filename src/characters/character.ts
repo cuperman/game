@@ -6,6 +6,9 @@ export interface ICharacter {
   vx: number;
   vy: number;
 
+  width: number;
+  height: number;
+
   load: () => Promise<void>;
   render: (screen: Screen) => void;
   runRight: () => void;
@@ -27,13 +30,27 @@ export class Character implements ICharacter {
 
   protected direction: CharacterDirection;
 
+  private _width: number;
+  private _height: number;
+
   constructor(x: number, y: number) {
     this.x = x;
     this.y = y;
     this.vx = 0;
     this.vy = 0;
 
+    this._width = 16;
+    this._height = 16;
+
     this.direction = CharacterDirection.RIGHT;
+  }
+
+  get width() {
+    return this._width;
+  }
+
+  get height() {
+    return this._height;
   }
 
   async load() {

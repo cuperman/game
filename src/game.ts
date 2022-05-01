@@ -54,6 +54,11 @@ export class Game {
     if (this.character.y > groundLevel) {
       this.character.y = groundLevel;
     }
+    if (this.character.x < 0) {
+      this.character.x = 0;
+    } else if (this.character.x > this.stage.width - this.character.width) {
+      this.character.x = this.stage.width - this.character.width;
+    }
   }
 
   offsetScreen() {
