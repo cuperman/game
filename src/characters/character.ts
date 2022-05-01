@@ -1,3 +1,5 @@
+import { Screen } from '../screen';
+
 export interface Character {
   x: number;
   y: number;
@@ -5,8 +7,9 @@ export interface Character {
   vy: number;
 
   load: () => Promise<void>;
-  render: (context: CanvasRenderingContext2D) => void;
+  render: (screen: Screen) => void;
   runRight: () => void;
   runLeft: () => void;
   stop: () => void;
+  toString: () => string;
 }

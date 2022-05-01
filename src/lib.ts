@@ -1,3 +1,5 @@
+const virtualLogCache: { [key: string]: any } = {};
+
 export interface Color {
   readonly r: number;
   readonly g: number;
@@ -13,7 +15,7 @@ export class Canvas {
     this.element.height = height;
   }
 
-  get2DContext() {
+  get2DContext(): CanvasRenderingContext2D {
     return this.element.getContext('2d');
   }
 }
@@ -62,4 +64,11 @@ export async function sleep(duration: number) {
       resolve(null);
     }, duration);
   });
+}
+
+export function virtualLog(key: string, obj: any) {
+  if (obj !== virtualLogCache[key]) {
+    console.log(key, obj);
+  }
+  virtualLogCache[key] = obj;
 }

@@ -1,5 +1,6 @@
 import { Character } from './character';
 import { loadImage, applyAlpha } from '../lib';
+import { Screen } from '../screen';
 
 export class Tester implements Character {
   public x: number;
@@ -22,14 +23,11 @@ export class Tester implements Character {
     this.sprites = sprites;
   }
 
-  render(context: CanvasRenderingContext2D) {
+  render(screen: Screen) {
     const width = 16;
     const height = 16;
 
-    context.translate(320, 0);
-    context.scale(-1, 1);
-    context.drawImage(this.sprites, 0, 8, width, height, this.x, this.y, width, height);
-    context.resetTransform();
+    screen.drawSpriteFlipped(this.sprites, 0, 8, width, height, this.x, this.y, width, height);
   }
 
   runLeft() {

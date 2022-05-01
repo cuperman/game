@@ -1,21 +1,22 @@
 import { Character, Mario } from './characters';
 import { Controller } from './controller';
-import { Stage, Stage1 } from './stages';
-import { Canvas, sleep } from './lib';
+import { Stage, MarioWorld11 } from './stages';
+import { sleep, virtualLog } from './lib';
+import { Screen } from './screen';
 
 export class Game {
-  public canvas: Canvas;
   public controller: Controller;
+  public screen: Screen;
 
   private stage: Stage;
   private character: Character;
 
   constructor() {
-    this.canvas = new Canvas(320, 240);
+    this.screen = new Screen(320, 240);
     this.controller = new Controller();
 
-    this.stage = new Stage1();
-    this.character = new Mario();
+    this.stage = new MarioWorld11();
+    this.character = new Mario(3000, 0);
   }
 
   processInput() {
@@ -53,6 +54,16 @@ export class Game {
     }
   }
 
+  offsetScreen() {
+    if (this.character.x <= this.screen.width / 2) {
+      this.screen.xOffset = 0;
+    } else if (this.character.x > this.stage.width - this.screen.width / 2) {
+      this.screen.xOffset = this.stage.width - this.screen.width;
+    } else {
+      this.screen.xOffset = this.character.x - this.screen.width / 2;
+    }
+  }
+
   async load() {
     const stageLoaded = this.stage.load();
     const marioLoaded = this.character.load();
@@ -61,10 +72,13 @@ export class Game {
   }
 
   render() {
-    const context = this.canvas.get2DContext();
+    virtualLog('screen', this.screen.toString());
+    virtualLog('character ', this.character.toString());
 
-    this.stage.render(context);
-    this.character.render(context);
+    const context = this.screen.canvas.get2DContext();
+
+    this.stage.render(this.screen);
+    this.character.render(this.screen);
     this.controller.render(context);
   }
 
@@ -78,6 +92,7 @@ export class Game {
 
       this.processInput();
       this.applyPhysics();
+      this.offsetScreen();
       this.render();
 
       const end = new Date().getTime();
