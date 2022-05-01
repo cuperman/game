@@ -1,5 +1,3 @@
-const virtualLogCache: { [key: string]: any } = {};
-
 export interface Color {
   readonly r: number;
   readonly g: number;
@@ -56,19 +54,4 @@ export async function applyAlpha(imageBitmap: ImageBitmap, alphaColor: Color): P
   });
 
   return createImageBitmap(new ImageData(alteredData, width, height));
-}
-
-export async function sleep(duration: number) {
-  return new Promise((resolve, _reject) => {
-    setTimeout(() => {
-      resolve(null);
-    }, duration);
-  });
-}
-
-export function virtualLog(key: string, obj: any) {
-  if (obj !== virtualLogCache[key]) {
-    console.log(key, obj);
-  }
-  virtualLogCache[key] = obj;
 }

@@ -1,7 +1,7 @@
 import { Character, Mario } from './characters';
 import { Controller } from './controller';
 import { Stage, MarioWorld11 } from './stages';
-import { sleep, virtualLog } from './lib';
+import { sleep, Logger } from './lib';
 import { Screen } from './screen';
 
 export class Game {
@@ -10,13 +10,15 @@ export class Game {
 
   private stage: Stage;
   private character: Character;
+  private logger: Logger;
 
   constructor() {
     this.screen = new Screen(320, 240);
     this.controller = new Controller();
 
     this.stage = new MarioWorld11();
-    this.character = new Mario(3000, 0);
+    this.character = new Mario(0, 0);
+    this.logger = new Logger();
   }
 
   processInput() {
@@ -72,8 +74,8 @@ export class Game {
   }
 
   render() {
-    virtualLog('screen', this.screen.toString());
-    virtualLog('character ', this.character.toString());
+    this.logger.diff('screen', this.screen.toString());
+    this.logger.diff('character ', this.character.toString());
 
     const context = this.screen.canvas.get2DContext();
 
@@ -83,7 +85,11 @@ export class Game {
   }
 
   async start() {
+    this.logger.info('starting game...');
+
     const targetFrameRate = 30;
+    this.logger.info('target framerate', 30);
+
     const maxDelay = 1000 / targetFrameRate;
 
     // start game loop
