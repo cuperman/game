@@ -1,19 +1,28 @@
 import { Screen } from './screen';
+import { Logger } from './lib';
 
 export class Controller {
   public up: boolean;
   public down: boolean;
   public left: boolean;
   public right: boolean;
+  public action: boolean;
+
+  private logger: Logger;
 
   constructor() {
     this.up = false;
     this.down = false;
     this.left = false;
     this.right = false;
+    this.action = false;
+
+    this.logger = new Logger();
   }
 
   onKeyUp(event: KeyboardEvent) {
+    this.logger.info(`key up: "${event.key}"`);
+
     switch (event.key) {
       case 'ArrowUp':
         this.up = false;
@@ -27,10 +36,14 @@ export class Controller {
       case 'ArrowRight':
         this.right = false;
         break;
+      case ' ':
+        this.action = false;
     }
   }
 
   onKeyDown(event: KeyboardEvent) {
+    this.logger.info(`key down: "${event.key}"`);
+
     switch (event.key) {
       case 'ArrowUp':
         this.up = true;
@@ -44,6 +57,8 @@ export class Controller {
       case 'ArrowRight':
         this.right = true;
         break;
+      case ' ':
+        this.action = true;
     }
   }
 
@@ -61,6 +76,8 @@ export class Controller {
     screen.drawRectangle(screen.width - btnW * 3, btnH * 1, btnW, btnH, { color });
     // right outline
     screen.drawRectangle(screen.width - btnW * 1, btnH * 1, btnW, btnH, { color });
+    // action outline
+    screen.drawRectangle(screen.width - btnW * 7, btnH * 1, btnW * 3, btnH, { color });
 
     // up fill
     if (this.up) {
@@ -80,6 +97,11 @@ export class Controller {
     // right fill
     if (this.right) {
       screen.drawRectangle(screen.width - btnW * 1, btnH * 1, btnW, btnH, { color, fill: true });
+    }
+
+    // action fill
+    if (this.action) {
+      screen.drawRectangle(screen.width - btnW * 7, btnH * 1, btnW * 3, btnH, { color, fill: true });
     }
   }
 }

@@ -19,7 +19,7 @@ export class Logger {
 
   diff(key: string, obj: any) {
     if (this.cache[key] !== obj) {
-      this.info(obj);
+      this.info(key, obj);
     }
     this.cache[key] = obj;
   }

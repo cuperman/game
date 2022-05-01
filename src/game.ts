@@ -22,22 +22,25 @@ export class Game {
   }
 
   processInput() {
-    if (this.controller.down) {
-    } else if (this.controller.right) {
+    if (this.controller.action && this.character.grounded) {
+      this.character.jump();
+    } else if (this.controller.right && this.character.grounded) {
       this.character.runRight();
-    } else if (this.controller.left) {
+    } else if (this.controller.left && this.character.grounded) {
       this.character.runLeft();
-    } else {
+    } else if (this.character.grounded && this.character.moving) {
       this.character.stop();
     }
   }
 
   applyPhysics() {
     const groundLevel = 192;
+    const gravityAcceleration = 2;
 
     // apply gravity
-    if (this.character.y < groundLevel) {
-      this.character.vy = this.character.vy + 8;
+    if (this.character.y < groundLevel || this.character.vy < 0) {
+      // if character is above ground level or going up
+      this.character.vy = this.character.vy + gravityAcceleration;
     } else {
       this.character.vy = 0;
     }

@@ -20,10 +20,13 @@ export class Mario extends Character {
     const width = 16;
     const height = 16;
 
-    if (this.vy > 0 && this.vx === 0) {
-      // falling
-      screen.drawSprite(this.sprites, 116, 8, width, height, this.x, this.y, width, height);
-    } else if (this.vx < 0) {
+    if (this.vy !== 0 && this.direction === CharacterDirection.RIGHT) {
+      // jumping right
+      screen.drawSprite(this.sprites, 96, 8, width, height, this.x, this.y, width, height);
+    } else if (this.vy !== 0 && this.direction === CharacterDirection.LEFT) {
+      // jumping left
+      screen.drawSpriteFlipped(this.sprites, 96, 8, width, height, this.x, this.y, width, height);
+    } else if (this.vx < 0 && this.grounded) {
       // run left
       if (this.frame === 0) {
         screen.drawSpriteFlipped(this.sprites, 20, 8, width, height, this.x, this.y, width, height);
@@ -35,7 +38,7 @@ export class Mario extends Character {
         screen.drawSpriteFlipped(this.sprites, 56, 8, width, height, this.x, this.y, width, height);
         this.frame = 0;
       }
-    } else if (this.vx > 0) {
+    } else if (this.vx > 0 && this.grounded) {
       // run right
       if (this.frame === 0) {
         screen.drawSprite(this.sprites, 20, 8, width, height, this.x, this.y, width, height);

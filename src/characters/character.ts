@@ -1,3 +1,4 @@
+import { Logger } from '../lib';
 import { Screen } from '../screen';
 
 export interface ICharacter {
@@ -9,10 +10,14 @@ export interface ICharacter {
   width: number;
   height: number;
 
+  grounded: boolean;
+  moving: boolean;
+
   load: () => Promise<void>;
   render: (screen: Screen) => void;
   runRight: () => void;
   runLeft: () => void;
+  jump: () => void;
   stop: () => void;
   toString: () => string;
 }
@@ -32,6 +37,7 @@ export class Character implements ICharacter {
 
   private _width: number;
   private _height: number;
+  private _logger: Logger;
 
   constructor(x: number, y: number) {
     this.x = x;
@@ -43,6 +49,7 @@ export class Character implements ICharacter {
     this._height = 16;
 
     this.direction = CharacterDirection.RIGHT;
+    this._logger = new Logger();
   }
 
   get width() {
@@ -57,17 +64,34 @@ export class Character implements ICharacter {
     return;
   }
 
+  get grounded(): boolean {
+    return this.y === 192;
+  }
+
+  get moving(): boolean {
+    return this.vx !== 0 || this.vy !== 0;
+  }
+
   runRight() {
+    this._logger.info('character run right');
     this.direction = CharacterDirection.RIGHT;
     this.vx = 5;
   }
 
   runLeft() {
+    this._logger.info('character run left');
     this.direction = CharacterDirection.LEFT;
     this.vx = -5;
   }
 
+  jump() {
+    this._logger.info('character jump');
+    const jumpVelocity = 16;
+    this.vy = -jumpVelocity;
+  }
+
   stop() {
+    this._logger.info('character stop');
     this.vx = 0;
   }
 
