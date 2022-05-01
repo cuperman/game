@@ -21,11 +21,11 @@ export class Game {
   processInput() {
     if (this.controller.down) {
     } else if (this.controller.right) {
-      this.character.vx = 5;
+      this.character.runRight();
     } else if (this.controller.left) {
-      this.character.vx = -5;
+      this.character.runLeft();
     } else {
-      this.character.vx = 0;
+      this.character.stop();
     }
   }
 

@@ -6,4 +6,7 @@ export interface Character {
 
   load: () => Promise<void>;
   render: (context: CanvasRenderingContext2D) => void;
+  runRight: () => void;
+  runLeft: () => void;
+  stop: () => void;
 }
