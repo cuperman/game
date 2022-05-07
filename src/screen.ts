@@ -4,6 +4,7 @@ export interface RectangleOptions {
   readonly color?: string;
   readonly offset?: boolean;
   readonly fill?: boolean;
+  readonly alpha?: number;
 }
 
 export class Screen {
@@ -26,8 +27,10 @@ export class Screen {
   }
 
   drawRectangle(x: number, y: number, w: number, h: number, options: RectangleOptions = {}) {
-    const rectX = options.offset ? x - this.xOffset : x;
-    const rectY = options.offset ? y - this.yOffset : y;
+    const rectX = typeof options.offset !== 'undefined' ? x - this.xOffset : x;
+    const rectY = typeof options.offset !== 'undefined' ? y - this.yOffset : y;
+
+    this.context.globalAlpha = typeof options.alpha !== 'undefined' ? options.alpha : 1;
 
     if (options.fill) {
       this.context.fillStyle = options.color ? options.color : 'black';
@@ -36,6 +39,8 @@ export class Screen {
       this.context.strokeStyle = options.color ? options.color : 'black';
       this.context.strokeRect(rectX, rectY, w, h);
     }
+
+    this.context.globalAlpha = 1;
   }
 
   drawBackground(image: CanvasImageSource) {
@@ -70,6 +75,10 @@ export class Screen {
     this.context.scale(-1, 1);
     this.context.drawImage(image, sx, sy, sw, sh, -dx - dw + this.xOffset, dy - this.yOffset, dw, dh);
     this.context.resetTransform();
+  }
+
+  drawText(text: string, x: number, y: number) {
+    this.context.fillText(text, x, y);
   }
 
   toString(): string {

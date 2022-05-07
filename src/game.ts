@@ -1,6 +1,6 @@
-import { ICharacter, Mario } from './characters';
+import { Character, ICharacter, Mario, Tester } from './characters';
 import { Controller } from './controller';
-import { IStage, MarioWorld11 } from './stages';
+import { IStage, MarioWorld11, Stage, TileType, MarioWorld1Fds } from './stages';
 import { sleep, Logger } from './lib';
 import { Screen } from './screen';
 
@@ -8,17 +8,29 @@ export class Game {
   public controller: Controller;
   public screen: Screen;
 
+  protected logger: Logger;
+
   private stage: IStage;
   private character: ICharacter;
-  private logger: Logger;
+  private running: boolean;
+  private isGameOver: boolean;
 
   constructor() {
     this.screen = new Screen(320, 240);
     this.controller = new Controller();
 
+    // this.stage = new Stage();
     this.stage = new MarioWorld11();
+    // this.stage = new MarioWorld1Fds();
+
+    // this.character = new Character(0, 0);
+    // this.character = new Tester(0, 0);
     this.character = new Mario(0, 0);
+
     this.logger = new Logger();
+
+    this.running = false;
+    this.isGameOver = false;
   }
 
   processInput() {
@@ -34,16 +46,11 @@ export class Game {
   }
 
   applyPhysics() {
-    const groundLevel = 192;
-    const gravityAcceleration = 2;
+    // const gravityAcceleration = 2;
+    const gravityAcceleration = 1.6;
 
     // apply gravity
-    if (this.character.y < groundLevel || this.character.vy < 0) {
-      // if character is above ground level or going up
-      this.character.vy = this.character.vy + gravityAcceleration;
-    } else {
-      this.character.vy = 0;
-    }
+    this.character.vy = this.character.vy + gravityAcceleration;
 
     // move objects
     if (this.character.vx !== 0) {
@@ -54,21 +61,67 @@ export class Game {
     }
 
     // apply collisions
-    if (this.character.y > groundLevel) {
-      this.character.y = groundLevel;
+    if (this.character.vy > 0) {
+      // going down
+      const characterBottomTileX = Math.floor(this.character.x / 16);
+      const characterBottomTileY = Math.floor((this.character.y + this.character.height) / 16);
+
+      if (this.stage.getTile(characterBottomTileX, characterBottomTileY) === TileType.SOLID) {
+        // move to top of tile
+        this.character.y = characterBottomTileY * 16 - 16;
+        this.character.vy = 0;
+      }
+    } else if (this.character.vy < 0) {
+      // going up
+      const characterTopTileX = Math.floor(this.character.x / 16);
+      const characterTopTileY = Math.floor(this.character.y / 16);
+
+      if (this.stage.getTile(characterTopTileX, characterTopTileY) === TileType.SOLID) {
+        // move to bottom of tile
+        this.character.y = characterTopTileY * 16 + 16;
+        this.character.vy = 0;
+      }
     }
+    if (this.character.vx > 0) {
+      // going right
+      const characterRightTileX = Math.floor((this.character.x + this.character.width) / 16);
+      const characterRightTileY = Math.floor(this.character.y / 16);
+
+      if (this.stage.getTile(characterRightTileX, characterRightTileY) === TileType.SOLID) {
+        // move to the left of tile
+        this.character.x = characterRightTileX * 16 - 16;
+        this.character.vx = 0;
+      }
+    } else if (this.character.vx < 0) {
+      // going left
+      const characterLeftTileX = Math.floor(this.character.x / 16);
+      const characterLeftTileY = Math.floor(this.character.y / 16);
+
+      if (this.stage.getTile(characterLeftTileX, characterLeftTileY) === TileType.SOLID) {
+        // move to the right of tile
+        this.character.x = characterLeftTileX * 16 + 16;
+        this.character.vx = 0;
+      }
+    }
+
     if (this.character.x < 0) {
       this.character.x = 0;
-    } else if (this.character.x > this.stage.width - this.character.width) {
-      this.character.x = this.stage.width - this.character.width;
+    } else if (this.character.x > this.stage.pixelWidth - this.character.width) {
+      this.character.x = this.stage.pixelWidth - this.character.width;
+    }
+
+    // check pulse
+
+    if (this.character.y > this.stage.pixelHeight) {
+      this.gameOver();
     }
   }
 
   offsetScreen() {
     if (this.character.x <= this.screen.width / 2) {
       this.screen.xOffset = 0;
-    } else if (this.character.x > this.stage.width - this.screen.width / 2) {
-      this.screen.xOffset = this.stage.width - this.screen.width;
+    } else if (this.character.x > this.stage.pixelWidth - this.screen.width / 2) {
+      this.screen.xOffset = this.stage.pixelWidth - this.screen.width;
     } else {
       this.screen.xOffset = this.character.x - this.screen.width / 2;
     }
@@ -90,8 +143,15 @@ export class Game {
     this.controller.render(this.screen);
   }
 
+  renderGameOver() {
+    this.screen.drawText('GAME OVER', 320 / 2, 240 / 2);
+    this.logger.diff('GAME OVER', ':(');
+    return;
+  }
+
   async start() {
     this.logger.info('starting game...');
+    this.running = true;
 
     const targetFrameRate = 30;
     this.logger.info('target framerate', 30);
@@ -99,13 +159,17 @@ export class Game {
     const maxDelay = 1000 / targetFrameRate;
 
     // start game loop
-    while (true) {
+    while (this.running) {
       const start = new Date().getTime();
 
-      this.processInput();
-      this.applyPhysics();
-      this.offsetScreen();
-      this.render();
+      if (this.isGameOver) {
+        this.renderGameOver();
+      } else {
+        this.processInput();
+        this.applyPhysics();
+        this.offsetScreen();
+        this.render();
+      }
 
       const end = new Date().getTime();
       const delay = maxDelay - (end - start);
@@ -113,5 +177,13 @@ export class Game {
         await sleep(delay);
       }
     }
+  }
+
+  pause() {
+    this.running = false;
+  }
+
+  gameOver() {
+    this.isGameOver = true;
   }
 }

@@ -65,7 +65,7 @@ export class Character implements ICharacter {
   }
 
   get grounded(): boolean {
-    return this.y === 192;
+    return this.vy === 0;
   }
 
   get moving(): boolean {
@@ -99,7 +99,11 @@ export class Character implements ICharacter {
     const width = 16;
     const height = 16;
 
-    screen.drawRectangle(this.x, this.y, width, height, { fill: true, color: 'white', offset: true });
+    screen.drawRectangle(Math.round(this.x), Math.round(this.y), width, height, {
+      fill: true,
+      color: 'white',
+      offset: true,
+    });
   }
 
   toString(): string {

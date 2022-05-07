@@ -11,7 +11,7 @@ export class Tester extends Character {
 
   async load() {
     const alphaColor = { r: 146, g: 144, b: 255 };
-    const sprites = await loadImage('/img/mario.png').then((image) => applyAlpha(image, alphaColor));
+    const sprites = await loadImage('/img/mario-sprites.png').then((image) => applyAlpha(image, alphaColor));
     this.sprites = sprites;
   }
 
@@ -19,6 +19,6 @@ export class Tester extends Character {
     const width = 16;
     const height = 16;
 
-    screen.drawSpriteFlipped(this.sprites, 0, 8, width, height, this.x, this.y, width, height);
+    screen.drawSpriteFlipped(this.sprites, 0, 8, width, height, Math.round(this.x), Math.round(this.y), width, height);
   }
 }
