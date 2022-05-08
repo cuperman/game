@@ -78,6 +78,7 @@ export class Screen {
   }
 
   drawText(text: string, x: number, y: number) {
+    this.context.fillStyle = 'white';
     this.context.fillText(text, x, y);
   }
 

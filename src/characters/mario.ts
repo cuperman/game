@@ -60,10 +60,10 @@ export class Mario extends Character {
       }
     } else if (this.direction === CharacterDirection.LEFT) {
       // standing facing left
-      screen.drawSpriteFlipped(this.sprites, 0, 8, width, height, this.x, this.y, width, height);
+      screen.drawSpriteFlipped(this.sprites, 0, 8, width, height, pixelX, pixelY, width, height);
     } else {
       // standing facing right
-      screen.drawSprite(this.sprites, 0, 8, width, height, this.x, this.y, width, height);
+      screen.drawSprite(this.sprites, 0, 8, width, height, pixelX, pixelY, width, height);
     }
   }
 }

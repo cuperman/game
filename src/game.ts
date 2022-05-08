@@ -14,6 +14,8 @@ export class Game {
   private character: ICharacter;
   private running: boolean;
   private isGameOver: boolean;
+  private collisionTiles: Set<string>;
+  private drawCollisions: boolean;
 
   constructor() {
     this.screen = new Screen(320, 240);
@@ -31,6 +33,8 @@ export class Game {
 
     this.running = false;
     this.isGameOver = false;
+    this.collisionTiles = new Set<string>();
+    this.drawCollisions = false;
   }
 
   processInput() {
@@ -61,46 +65,54 @@ export class Game {
     }
 
     // apply collisions
+
+    // vertical collisions
     if (this.character.vy > 0) {
       // going down
-      const characterBottomTileX = Math.floor(this.character.x / 16);
+      const characterBottomTileX = Math.floor((this.character.x + 8) / 16);
       const characterBottomTileY = Math.floor((this.character.y + this.character.height) / 16);
 
       if (this.stage.getTile(characterBottomTileX, characterBottomTileY) === TileType.SOLID) {
         // move to top of tile
         this.character.y = characterBottomTileY * 16 - 16;
         this.character.land();
+        this.collisionTiles.add(JSON.stringify({ x: characterBottomTileX, y: characterBottomTileY }));
       }
     } else if (this.character.vy < 0) {
       // going up
-      const characterTopTileX = Math.floor(this.character.x / 16);
+      const characterTopTileX = Math.floor((this.character.x + 8) / 16);
       const characterTopTileY = Math.floor(this.character.y / 16);
 
       if (this.stage.getTile(characterTopTileX, characterTopTileY) === TileType.SOLID) {
         // move to bottom of tile
-        this.character.y = characterTopTileY * 16 + 16;
+        // this.character.y = characterTopTileY * 16 + 16;
         this.character.vy = 0;
+        this.collisionTiles.add(JSON.stringify({ x: characterTopTileX, y: characterTopTileY }));
       }
     }
+
+    // horizontal collisions
     if (this.character.vx > 0) {
       // going right
       const characterRightTileX = Math.floor((this.character.x + this.character.width) / 16);
-      const characterRightTileY = Math.floor(this.character.y / 16);
+      const characterRightTileY = Math.floor((this.character.y + 8) / 16);
 
       if (this.stage.getTile(characterRightTileX, characterRightTileY) === TileType.SOLID) {
         // move to the left of tile
         this.character.x = characterRightTileX * 16 - 16;
         this.character.vx = 0;
+        this.collisionTiles.add(JSON.stringify({ x: characterRightTileX, y: characterRightTileY }));
       }
     } else if (this.character.vx < 0) {
       // going left
       const characterLeftTileX = Math.floor(this.character.x / 16);
-      const characterLeftTileY = Math.floor(this.character.y / 16);
+      const characterLeftTileY = Math.floor((this.character.y + 8) / 16);
 
       if (this.stage.getTile(characterLeftTileX, characterLeftTileY) === TileType.SOLID) {
         // move to the right of tile
         this.character.x = characterLeftTileX * 16 + 16;
         this.character.vx = 0;
+        this.collisionTiles.add(JSON.stringify({ x: characterLeftTileX, y: characterLeftTileY }));
       }
     }
 
@@ -141,6 +153,18 @@ export class Game {
     this.stage.render(this.screen);
     this.character.render(this.screen);
     this.controller.render(this.screen);
+
+    if (this.drawCollisions) {
+      this.collisionTiles.forEach((tile) => {
+        const tileCoords = JSON.parse(tile);
+        this.screen.drawRectangle(tileCoords.x * 16, tileCoords.y * 16, 16, 16, {
+          color: 'yellow',
+          fill: true,
+          alpha: 0.5,
+          offset: true,
+        });
+      });
+    }
   }
 
   renderGameOver() {
