@@ -91,7 +91,7 @@ export class Game {
 
       if (this.stage.getTile(characterTopTileX, characterTopTileY) === TileType.SOLID) {
         // move to bottom of tile
-        // this.character.y = characterTopTileY * 16 + 16;
+        this.character.y = characterTopTileY * 16 + 16;
         this.character.vy = 0;
         this.collisionTiles.add(JSON.stringify({ x: characterTopTileX, y: characterTopTileY }));
       }
