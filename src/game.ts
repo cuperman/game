@@ -123,13 +123,6 @@ export class Game {
       }
     }
 
-    // screen boundaries
-    if (this.character.x < 0) {
-      this.character.x = 0;
-    } else if (this.character.x > this.stage.gridWidth - this.character.width) {
-      this.character.x = this.stage.gridWidth - this.character.width;
-    }
-
     // check pulse
     if (this.character.y > this.stage.tileHeight) {
       this.gameOver();
