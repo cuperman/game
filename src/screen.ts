@@ -55,10 +55,10 @@ export class Screen {
     sh: number,
     dx: number,
     dy: number,
-    dw: number,
-    dh: number,
+    dw?: number,
+    dh?: number,
   ) {
-    this.context.drawImage(image, sx, sy, sw, sh, dx - this.xOffset, dy - this.yOffset, dw, dh);
+    this.context.drawImage(image, sx, sy, sw, sh, dx - this.xOffset, dy - this.yOffset, dw || sw, dh || sh);
   }
 
   drawSpriteFlipped(
@@ -69,11 +69,21 @@ export class Screen {
     sh: number,
     dx: number,
     dy: number,
-    dw: number,
-    dh: number,
+    dw?: number,
+    dh?: number,
   ) {
     this.context.scale(-1, 1);
-    this.context.drawImage(image, sx, sy, sw, sh, -dx - dw + this.xOffset, dy - this.yOffset, dw, dh);
+    this.context.drawImage(
+      image,
+      sx,
+      sy,
+      sw,
+      sh,
+      -dx - (dw || sw) + this.xOffset,
+      dy - this.yOffset,
+      dw || sw,
+      dh || sh,
+    );
     this.context.resetTransform();
   }
 

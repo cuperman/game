@@ -74,13 +74,13 @@ export enum CharacterDirection {
 
 export class Character implements ICharacter {
   protected direction: CharacterDirection;
+  protected _width: number;
+  protected _height: number;
 
   private _x: number;
   private _y: number;
   private _vx: number;
   private _vy: number;
-  private _width: number;
-  private _height: number;
   private _logger: Logger;
   private _isGrounded: boolean;
 
@@ -210,10 +210,10 @@ export class Character implements ICharacter {
 
   tileBottom(): TileCoordinates {
     const center = Math.floor(this.x + 0.5);
-    const top = Math.floor(this.y);
+    const top = Math.floor(this.y + this.height - 1); // top of the bottom tile
     const bottom = Math.floor(this.y + this.height);
 
-    if (this.y === top) {
+    if (top === this.y + this.height - 1) {
       return { x: center, y: top };
     }
     return { x: center, y: bottom };
@@ -227,11 +227,11 @@ export class Character implements ICharacter {
   }
 
   tileRight(): TileCoordinates {
-    const left = Math.floor(this.x);
+    const left = Math.floor(this.x + this.width - 1); // left of the right tile
     const right = Math.floor(this.x + this.width);
     const middle = Math.floor(this.y + 0.5);
 
-    if (this.x === left) {
+    if (left === this.x + this.width - 1) {
       return { x: left, y: middle };
     }
     return { x: right, y: middle };

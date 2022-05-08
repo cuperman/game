@@ -17,7 +17,7 @@ describe('Character', () => {
   });
 
   describe('tileBottom', () => {
-    it('returns the tile that the top edge of character is in', () => {
+    it('returns the tile that the bottom edge of character is in', () => {
       character.moveTo(0, 0);
       expect(character.tileBottom()).toEqual({ x: 0, y: 0 });
 

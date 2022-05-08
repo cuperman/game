@@ -1,4 +1,4 @@
-import { Character, ICharacter, Mario, Tester } from './characters';
+import { Character, ICharacter, Link, Mario, Tester } from './characters';
 import { Controller } from './controller';
 import { IStage, MarioWorld11, Stage, TileType, MarioWorld1Fds } from './stages';
 import { sleep, Logger } from './lib';
@@ -28,7 +28,8 @@ export class Game {
 
     // this.character = new Character(0, 0);
     // this.character = new Tester(0, 0);
-    this.character = new Mario(0, 0);
+    // this.character = new Mario(0, 0);
+    this.character = new Link(0, 0);
 
     this.logger = new Logger();
 
@@ -75,7 +76,7 @@ export class Game {
         this.collisionTiles.add(JSON.stringify(this.character.tileBottom()));
 
         // move character above the tile
-        this.character.moveTo(this.character.x, this.character.tileBottom().y - 1);
+        this.character.moveTo(this.character.x, this.character.tileBottom().y - this.character.height);
         this.character.land();
       }
     } else if (this.character.vy < 0) {
@@ -84,7 +85,7 @@ export class Game {
         this.collisionTiles.add(JSON.stringify(this.character.tileTop()));
 
         // move character below the tile
-        this.character.moveTo(this.character.x, this.character.tileTop().y + 1);
+        this.character.moveTo(this.character.x, this.character.tileTop().y + this.character.height);
         this.character.peak();
       }
     }
@@ -96,7 +97,7 @@ export class Game {
         this.collisionTiles.add(JSON.stringify(this.character.tileRight()));
 
         // move character to the left of tile
-        this.character.moveTo(this.character.tileRight().x - 1, this.character.y);
+        this.character.moveTo(this.character.tileRight().x - this.character.width, this.character.y);
         this.character.stop();
       }
     } else if (this.character.vx < 0) {
@@ -105,7 +106,7 @@ export class Game {
         this.collisionTiles.add(JSON.stringify(this.character.tileLeft()));
 
         // move character to the right of tile
-        this.character.moveTo(this.character.tileLeft().x + 1, this.character.y);
+        this.character.moveTo(this.character.tileLeft().x + this.character.width, this.character.y);
         this.character.stop();
       }
     }
