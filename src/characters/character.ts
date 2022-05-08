@@ -6,42 +6,42 @@ export interface ICharacter {
   /*
    * Floating point value for horizontal coordinate on the tile grid
    */
-  x: number;
+  readonly x: number;
 
   /*
    * Floating point value for vertical coordinate on the tile grid
    */
-  y: number;
+  readonly y: number;
 
   /*
    * Floating point value for horizontal velocity (tiles/second)
    */
-  vx: number;
+  readonly vx: number;
 
   /*
    * Floating point value for vertical velocity (tiles/second)
    */
-  vy: number;
+  readonly vy: number;
 
   /*
    * Width of character in tiles
    */
-  width: number;
+  readonly width: number;
 
   /*
    * Height of character in tiles
    */
-  height: number;
+  readonly height: number;
 
   /*
    * True if character is on the ground, otherwise false
    */
-  grounded: boolean;
+  readonly grounded: boolean;
 
   /*
    * True if character is moving, otherwise false
    */
-  moving: boolean;
+  readonly moving: boolean;
 
   load: () => Promise<void>;
   render: (screen: Screen) => void;
@@ -52,7 +52,12 @@ export interface ICharacter {
   jumpUp: () => void;
   jumpRight: () => void;
   jumpLeft: () => void;
+  peak: () => void;
   land: () => void;
+
+  accelerate: (xAcceleration: number, yAccelleration: number) => void;
+  translate: (x: number, y: number) => void;
+  moveTo: (x: number, y: number) => void;
 
   tileTop: () => TileCoordinates;
   tileBottom: () => TileCoordinates;
@@ -68,23 +73,22 @@ export enum CharacterDirection {
 }
 
 export class Character implements ICharacter {
-  public x: number;
-  public y: number;
-  public vx: number;
-  public vy: number;
-
   protected direction: CharacterDirection;
 
+  private _x: number;
+  private _y: number;
+  private _vx: number;
+  private _vy: number;
   private _width: number;
   private _height: number;
   private _logger: Logger;
   private _isGrounded: boolean;
 
   constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-    this.vx = 0;
-    this.vy = 0;
+    this._x = x;
+    this._y = y;
+    this._vx = 0;
+    this._vy = 0;
 
     this._width = 1;
     this._height = 1;
@@ -95,16 +99,28 @@ export class Character implements ICharacter {
     this._isGrounded = false;
   }
 
+  get x() {
+    return this._x;
+  }
+
+  get y() {
+    return this._y;
+  }
+
+  get vx() {
+    return this._vx;
+  }
+
+  get vy() {
+    return this._vy;
+  }
+
   get width() {
     return this._width;
   }
 
   get height() {
     return this._height;
-  }
-
-  async load() {
-    return;
   }
 
   get grounded(): boolean {
@@ -115,48 +131,74 @@ export class Character implements ICharacter {
     return this.vx !== 0 || this.vy !== 0;
   }
 
+  async load() {
+    return;
+  }
+
   runRight() {
     this._logger.info('character run right');
     this.direction = CharacterDirection.RIGHT;
-    this.vx = 0.3125; // 5/16
+    this._vx = 0.3125; // 5/16
   }
 
   runLeft() {
     this._logger.info('character run left');
     this.direction = CharacterDirection.LEFT;
-    this.vx = -0.3125; // 5/16
+    this._vx = -0.3125; // 5/16
   }
 
   stop() {
     this._logger.info('character stop');
-    this.vx = 0;
+    this._vx = 0;
   }
 
   jumpUp() {
     this._logger.info('character jump up');
     const jumpVelocity = 1;
-    this.vy = -jumpVelocity;
+    this._vy = -jumpVelocity;
     this._isGrounded = false;
   }
 
   jumpRight() {
     this.jumpUp();
     this._logger.info('and to the right');
-    this.vx = 0.3125; // 5/16
+    this._vx = 0.3125; // 5/16
   }
 
   jumpLeft() {
     this.jumpUp();
     this._logger.info('and to the left');
-    this.vx = -0.3125; // 5/16
+    this._vx = -0.3125; // 5/16
+  }
+
+  /*
+   * This needs to be called when the character hits something from below
+   */
+  peak() {
+    this._vy = 0;
   }
 
   /*
    * This needs to be called when the character hits the ground
    */
   land() {
-    this.vy = 0;
+    this._vy = 0;
     this._isGrounded = true;
+  }
+
+  accelerate(xAcceleration: number, yAcceleration: number): void {
+    this._vx = this._vx + xAcceleration;
+    this._vy = this._vy + yAcceleration;
+  }
+
+  translate(x: number, y: number): void {
+    this._x = this._x + x;
+    this._y = this._y + y;
+  }
+
+  moveTo(x: number, y: number): void {
+    this._x = x;
+    this._y = y;
   }
 
   tileTop(): TileCoordinates {
