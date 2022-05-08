@@ -18,11 +18,13 @@ export class Mario extends Character {
   }
 
   render(screen: Screen) {
-    const width = 16;
-    const height = 16;
+    const tileWidth = 16; // pixels
+    const tileHeight = 16; // pixels
 
-    const pixelX = Math.round(this.x);
-    const pixelY = Math.round(this.y);
+    const pixelX = Math.round(this.x * tileWidth);
+    const pixelY = Math.round(this.y * tileHeight);
+    const pixelWidth = Math.round(this.width * tileWidth);
+    const pixelHeight = Math.round(this.height * tileHeight);
 
     if (this.drawBoundingBox) {
       screen.drawRectangle(pixelX, pixelY, 16, 16, { color: 'white', alpha: 0.5, fill: true, offset: true });
@@ -30,40 +32,40 @@ export class Mario extends Character {
 
     if (this.vy !== 0 && this.direction === CharacterDirection.RIGHT) {
       // jumping right
-      screen.drawSprite(this.sprites, 96, 8, width, height, pixelX, pixelY, width, height);
+      screen.drawSprite(this.sprites, 96, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
     } else if (this.vy !== 0 && this.direction === CharacterDirection.LEFT) {
       // jumping left
-      screen.drawSpriteFlipped(this.sprites, 96, 8, width, height, pixelX, pixelY, width, height);
+      screen.drawSpriteFlipped(this.sprites, 96, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
     } else if (this.vx < 0 && this.grounded) {
       // run left
       if (this.frame === 0) {
-        screen.drawSpriteFlipped(this.sprites, 20, 8, width, height, pixelX, pixelY, width, height);
+        screen.drawSpriteFlipped(this.sprites, 20, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
         this.frame = 1;
       } else if (this.frame === 1) {
-        screen.drawSpriteFlipped(this.sprites, 38, 8, width, height, pixelX, pixelY, width, height);
+        screen.drawSpriteFlipped(this.sprites, 38, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
         this.frame = 2;
       } else {
-        screen.drawSpriteFlipped(this.sprites, 56, 8, width, height, pixelX, pixelY, width, height);
+        screen.drawSpriteFlipped(this.sprites, 56, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
         this.frame = 0;
       }
     } else if (this.vx > 0 && this.grounded) {
       // run right
       if (this.frame === 0) {
-        screen.drawSprite(this.sprites, 20, 8, width, height, pixelX, pixelY, width, height);
+        screen.drawSprite(this.sprites, 20, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
         this.frame = 1;
       } else if (this.frame === 1) {
-        screen.drawSprite(this.sprites, 38, 8, width, height, pixelX, pixelY, width, height);
+        screen.drawSprite(this.sprites, 38, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
         this.frame = 2;
       } else {
-        screen.drawSprite(this.sprites, 56, 8, width, height, pixelX, pixelY, width, height);
+        screen.drawSprite(this.sprites, 56, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
         this.frame = 0;
       }
     } else if (this.direction === CharacterDirection.LEFT) {
       // standing facing left
-      screen.drawSpriteFlipped(this.sprites, 0, 8, width, height, pixelX, pixelY, width, height);
+      screen.drawSpriteFlipped(this.sprites, 0, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
     } else {
       // standing facing right
-      screen.drawSprite(this.sprites, 0, 8, width, height, pixelX, pixelY, width, height);
+      screen.drawSprite(this.sprites, 0, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
     }
   }
 }

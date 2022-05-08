@@ -57,7 +57,8 @@ export class Game {
 
   applyPhysics() {
     // const gravityAcceleration = 2;
-    const gravityAcceleration = 1.6;
+    // const gravityAcceleration = 1.6; // tiles/second/second
+    const gravityAcceleration = 0.1; // tiles/second/second
 
     // apply gravity
     this.character.vy = this.character.vy + gravityAcceleration;
@@ -75,23 +76,23 @@ export class Game {
     // vertical collisions
     if (this.character.vy > 0) {
       // going down
-      const characterBottomTileX = Math.floor((this.character.x + 8) / 16);
-      const characterBottomTileY = Math.floor((this.character.y + this.character.height) / 16);
+      const characterBottomTileX = Math.floor(this.character.x + 0.5);
+      const characterBottomTileY = Math.floor(this.character.y + this.character.height);
 
       if (this.stage.getTile(characterBottomTileX, characterBottomTileY) === TileType.SOLID) {
         // move to top of tile
-        this.character.y = characterBottomTileY * 16 - 16;
+        this.character.y = characterBottomTileY - 1;
         this.character.land();
         this.collisionTiles.add(JSON.stringify({ x: characterBottomTileX, y: characterBottomTileY }));
       }
     } else if (this.character.vy < 0) {
       // going up
-      const characterTopTileX = Math.floor((this.character.x + 8) / 16);
-      const characterTopTileY = Math.floor(this.character.y / 16);
+      const characterTopTileX = Math.floor(this.character.x + 0.5);
+      const characterTopTileY = Math.floor(this.character.y);
 
       if (this.stage.getTile(characterTopTileX, characterTopTileY) === TileType.SOLID) {
         // move to bottom of tile
-        this.character.y = characterTopTileY * 16 + 16;
+        this.character.y = characterTopTileY + 1;
         this.character.vy = 0;
         this.collisionTiles.add(JSON.stringify({ x: characterTopTileX, y: characterTopTileY }));
       }
@@ -100,48 +101,49 @@ export class Game {
     // horizontal collisions
     if (this.character.vx > 0) {
       // going right
-      const characterRightTileX = Math.floor((this.character.x + this.character.width) / 16);
-      const characterRightTileY = Math.floor((this.character.y + 8) / 16);
+      const characterRightTileX = Math.floor(this.character.x + this.character.width);
+      const characterRightTileY = Math.floor(this.character.y + 0.5);
 
       if (this.stage.getTile(characterRightTileX, characterRightTileY) === TileType.SOLID) {
         // move to the left of tile
-        this.character.x = characterRightTileX * 16 - 16;
+        this.character.x = characterRightTileX - 1;
         this.character.vx = 0;
         this.collisionTiles.add(JSON.stringify({ x: characterRightTileX, y: characterRightTileY }));
       }
     } else if (this.character.vx < 0) {
       // going left
-      const characterLeftTileX = Math.floor(this.character.x / 16);
-      const characterLeftTileY = Math.floor((this.character.y + 8) / 16);
+      const characterLeftTileX = Math.floor(this.character.x);
+      const characterLeftTileY = Math.floor(this.character.y + 0.5);
 
       if (this.stage.getTile(characterLeftTileX, characterLeftTileY) === TileType.SOLID) {
         // move to the right of tile
-        this.character.x = characterLeftTileX * 16 + 16;
+        this.character.x = characterLeftTileX + 1;
         this.character.vx = 0;
         this.collisionTiles.add(JSON.stringify({ x: characterLeftTileX, y: characterLeftTileY }));
       }
     }
 
+    // screen boundaries
     if (this.character.x < 0) {
       this.character.x = 0;
-    } else if (this.character.x > this.stage.pixelWidth - this.character.width) {
-      this.character.x = this.stage.pixelWidth - this.character.width;
+    } else if (this.character.x > this.stage.gridWidth - this.character.width) {
+      this.character.x = this.stage.gridWidth - this.character.width;
     }
 
     // check pulse
-
-    if (this.character.y > this.stage.pixelHeight) {
+    if (this.character.y > this.stage.tileHeight) {
       this.gameOver();
     }
   }
 
+  // note: screen coordinates and lengths are in pixels units
   offsetScreen() {
-    if (this.character.x <= this.screen.width / 2) {
+    if (this.character.x * 16 <= this.screen.width / 2) {
       this.screen.xOffset = 0;
-    } else if (this.character.x > this.stage.pixelWidth - this.screen.width / 2) {
+    } else if (this.character.x * 16 > this.stage.pixelWidth - this.screen.width / 2) {
       this.screen.xOffset = this.stage.pixelWidth - this.screen.width;
     } else {
-      this.screen.xOffset = this.character.x - this.screen.width / 2;
+      this.screen.xOffset = this.character.x * 16 - this.screen.width / 2;
     }
   }
 

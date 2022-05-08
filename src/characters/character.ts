@@ -2,15 +2,44 @@ import { Logger } from '../lib';
 import { Screen } from '../screen';
 
 export interface ICharacter {
+  /*
+   * Floating point value for horizontal coordinate on the tile grid
+   */
   x: number;
+
+  /*
+   * Floating point value for vertical coordinate on the tile grid
+   */
   y: number;
+
+  /*
+   * Floating point value for horizontal velocity (tiles/second)
+   */
   vx: number;
+
+  /*
+   * Floating point value for vertical velocity (tiles/second)
+   */
   vy: number;
 
+  /*
+   * Width of character in tiles
+   */
   width: number;
+
+  /*
+   * Height of character in tiles
+   */
   height: number;
 
+  /*
+   * True if character is on the ground, otherwise false
+   */
   grounded: boolean;
+
+  /*
+   * True if character is moving, otherwise false
+   */
   moving: boolean;
 
   load: () => Promise<void>;
@@ -49,8 +78,8 @@ export class Character implements ICharacter {
     this.vx = 0;
     this.vy = 0;
 
-    this._width = 16;
-    this._height = 16;
+    this._width = 1;
+    this._height = 1;
 
     this.direction = CharacterDirection.RIGHT;
     this._logger = new Logger();
@@ -81,13 +110,13 @@ export class Character implements ICharacter {
   runRight() {
     this._logger.info('character run right');
     this.direction = CharacterDirection.RIGHT;
-    this.vx = 5;
+    this.vx = 0.3125; // 5/16
   }
 
   runLeft() {
     this._logger.info('character run left');
     this.direction = CharacterDirection.LEFT;
-    this.vx = -5;
+    this.vx = -0.3125; // 5/16
   }
 
   stop() {
@@ -97,7 +126,7 @@ export class Character implements ICharacter {
 
   jumpUp() {
     this._logger.info('character jump up');
-    const jumpVelocity = 16;
+    const jumpVelocity = 1;
     this.vy = -jumpVelocity;
     this._isGrounded = false;
   }
@@ -105,13 +134,13 @@ export class Character implements ICharacter {
   jumpRight() {
     this.jumpUp();
     this._logger.info('and to the right');
-    this.vx = 5;
+    this.vx = 0.3125; // 5/16
   }
 
   jumpLeft() {
     this.jumpUp();
     this._logger.info('and to the left');
-    this.vx = -5;
+    this.vx = -0.3125; // 5/16
   }
 
   /*
@@ -123,10 +152,15 @@ export class Character implements ICharacter {
   }
 
   render(screen: Screen) {
-    const width = 16;
-    const height = 16;
+    const tileWidth = 16; // pixels
+    const tileHeight = 16; // pixels
 
-    screen.drawRectangle(Math.round(this.x), Math.round(this.y), width, height, {
+    const pixelX = Math.round(this.x * tileWidth);
+    const pixelY = Math.round(this.y * tileHeight);
+    const pixelWidth = Math.round(this.width * tileWidth);
+    const pixelHeight = Math.round(this.height * tileHeight);
+
+    screen.drawRectangle(pixelX, pixelY, pixelWidth, pixelHeight, {
       fill: true,
       color: 'white',
       offset: true,

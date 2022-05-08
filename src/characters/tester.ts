@@ -16,9 +16,14 @@ export class Tester extends Character {
   }
 
   render(screen: Screen) {
-    const width = 16;
-    const height = 16;
+    const tileWidth = 16; // pixels
+    const tileHeight = 16; // pixels
 
-    screen.drawSpriteFlipped(this.sprites, 0, 8, width, height, Math.round(this.x), Math.round(this.y), width, height);
+    const pixelX = Math.round(this.x * tileWidth);
+    const pixelY = Math.round(this.y * tileHeight);
+    const pixelWidth = Math.round(this.width * tileWidth);
+    const pixelHeight = Math.round(this.height * tileHeight);
+
+    screen.drawSpriteFlipped(this.sprites, 0, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
   }
 }
