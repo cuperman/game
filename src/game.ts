@@ -34,7 +34,7 @@ export class Game {
     this.running = false;
     this.isGameOver = false;
     this.collisionTiles = new Set<string>();
-    this.drawCollisions = true;
+    this.drawCollisions = false;
   }
 
   processInput() {
