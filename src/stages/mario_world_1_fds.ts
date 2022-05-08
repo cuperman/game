@@ -1,4 +1,4 @@
-import { Stage, TileType } from './stage';
+import { Stage, TileCoordinates, TileType } from './stage';
 import { loadImage } from '../lib';
 import { Screen } from '../screen';
 
@@ -20,7 +20,10 @@ export class MarioWorld1Fds extends Stage {
     this.gridHeight = Math.floor(this.pixelHeight / this.tileHeight);
   }
 
-  getTile(gridX: number, gridY: number): TileType {
+  getTile(coordinates: TileCoordinates): TileType {
+    const gridX = coordinates.x;
+    const gridY = coordinates.y;
+
     if (gridY >= this.gridHeight - 2) {
       // the 2 bottom tiles are solid ground
       // FIXME: we need a tile map for this stage

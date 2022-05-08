@@ -6,6 +6,11 @@ export enum TileType {
   SOLID = 'SOLID',
 }
 
+export interface TileCoordinates {
+  readonly x: number;
+  readonly y: number;
+}
+
 export interface IStage {
   tileWidth: number;
   tileHeight: number;
@@ -17,7 +22,7 @@ export interface IStage {
   gridHeight: number;
 
   load: () => Promise<void>;
-  getTile: (gridX: number, gridY: number) => TileType;
+  getTile: (coordinates: TileCoordinates) => TileType;
   render: (screen: Screen) => void;
 }
 
@@ -49,7 +54,10 @@ export class Stage implements IStage {
   /*
    * Get tile by coordinate
    */
-  getTile(gridX: number, gridY: number): TileType {
+  getTile(coordinates: TileCoordinates): TileType {
+    const gridX = coordinates.x;
+    const gridY = coordinates.y;
+
     if (gridY >= this.gridHeight - 1) {
       // bottom row is the ground
       return TileType.SOLID;

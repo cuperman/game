@@ -1,5 +1,6 @@
 import { Logger } from '../lib';
 import { Screen } from '../screen';
+import { TileCoordinates } from '../stages';
 
 export interface ICharacter {
   /*
@@ -44,6 +45,7 @@ export interface ICharacter {
 
   load: () => Promise<void>;
   render: (screen: Screen) => void;
+
   runRight: () => void;
   runLeft: () => void;
   stop: () => void;
@@ -51,6 +53,12 @@ export interface ICharacter {
   jumpRight: () => void;
   jumpLeft: () => void;
   land: () => void;
+
+  tileTop: () => TileCoordinates;
+  tileBottom: () => TileCoordinates;
+  tileLeft: () => TileCoordinates;
+  tileRight: () => TileCoordinates;
+
   toString: () => string;
 }
 
@@ -149,6 +157,42 @@ export class Character implements ICharacter {
   land() {
     this.vy = 0;
     this._isGrounded = true;
+  }
+
+  tileTop(): TileCoordinates {
+    const center = Math.floor(this.x + 0.5);
+    const top = Math.floor(this.y);
+
+    return { x: center, y: top };
+  }
+
+  tileBottom(): TileCoordinates {
+    const center = Math.floor(this.x + 0.5);
+    const top = Math.floor(this.y);
+    const bottom = Math.floor(this.y + this.height);
+
+    if (this.y === top) {
+      return { x: center, y: top };
+    }
+    return { x: center, y: bottom };
+  }
+
+  tileLeft(): TileCoordinates {
+    const left = Math.floor(this.x);
+    const middle = Math.floor(this.y + 0.5);
+
+    return { x: left, y: middle };
+  }
+
+  tileRight(): TileCoordinates {
+    const left = Math.floor(this.x);
+    const right = Math.floor(this.x + this.width);
+    const middle = Math.floor(this.y + 0.5);
+
+    if (this.x === left) {
+      return { x: left, y: middle };
+    }
+    return { x: right, y: middle };
   }
 
   render(screen: Screen) {

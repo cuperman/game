@@ -58,6 +58,7 @@ export class Game {
   applyPhysics() {
     // const gravityAcceleration = 2;
     // const gravityAcceleration = 1.6; // tiles/second/second
+    // const gravityAcceleration = 0.1; // tiles/second/second
     const gravityAcceleration = 0.1; // tiles/second/second
 
     // apply gravity
@@ -76,50 +77,39 @@ export class Game {
     // vertical collisions
     if (this.character.vy > 0) {
       // going down
-      const characterBottomTileX = Math.floor(this.character.x + 0.5);
-      const characterBottomTileY = Math.floor(this.character.y + this.character.height);
-
-      if (this.stage.getTile(characterBottomTileX, characterBottomTileY) === TileType.SOLID) {
-        // move to top of tile
-        this.character.y = characterBottomTileY - 1;
+      while (this.stage.getTile(this.character.tileBottom()) === TileType.SOLID) {
+        // move character above the tile
+        this.character.y = this.character.tileBottom().y - 1;
         this.character.land();
-        this.collisionTiles.add(JSON.stringify({ x: characterBottomTileX, y: characterBottomTileY }));
+
+        // this.collisionTiles.add(JSON.stringify({ x: characterBottomTileX, y: characterBottomTileY }));
       }
     } else if (this.character.vy < 0) {
       // going up
-      const characterTopTileX = Math.floor(this.character.x + 0.5);
-      const characterTopTileY = Math.floor(this.character.y);
-
-      if (this.stage.getTile(characterTopTileX, characterTopTileY) === TileType.SOLID) {
-        // move to bottom of tile
-        this.character.y = characterTopTileY + 1;
+      while (this.stage.getTile(this.character.tileTop()) === TileType.SOLID) {
+        // move character below the tile
+        this.character.y = this.character.tileTop().y + 1;
         this.character.vy = 0;
-        this.collisionTiles.add(JSON.stringify({ x: characterTopTileX, y: characterTopTileY }));
+        // this.collisionTiles.add(JSON.stringify({ x: characterTopTileX, y: characterTopTileY }));
       }
     }
 
     // horizontal collisions
     if (this.character.vx > 0) {
       // going right
-      const characterRightTileX = Math.floor(this.character.x + this.character.width);
-      const characterRightTileY = Math.floor(this.character.y + 0.5);
-
-      if (this.stage.getTile(characterRightTileX, characterRightTileY) === TileType.SOLID) {
-        // move to the left of tile
-        this.character.x = characterRightTileX - 1;
+      while (this.stage.getTile(this.character.tileRight()) === TileType.SOLID) {
+        // move character to the left of tile
+        this.character.x = this.character.tileRight().x - 1;
         this.character.vx = 0;
-        this.collisionTiles.add(JSON.stringify({ x: characterRightTileX, y: characterRightTileY }));
+        // this.collisionTiles.add(JSON.stringify({ x: characterRightTileX, y: characterRightTileY }));
       }
     } else if (this.character.vx < 0) {
       // going left
-      const characterLeftTileX = Math.floor(this.character.x);
-      const characterLeftTileY = Math.floor(this.character.y + 0.5);
-
-      if (this.stage.getTile(characterLeftTileX, characterLeftTileY) === TileType.SOLID) {
-        // move to the right of tile
-        this.character.x = characterLeftTileX + 1;
+      while (this.stage.getTile(this.character.tileLeft()) === TileType.SOLID) {
+        // move character to the right of tile
+        this.character.x = this.character.tileLeft().x + 1;
         this.character.vx = 0;
-        this.collisionTiles.add(JSON.stringify({ x: characterLeftTileX, y: characterLeftTileY }));
+        // this.collisionTiles.add(JSON.stringify({ x: characterLeftTileX, y: characterLeftTileY }));
       }
     }
 

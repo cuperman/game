@@ -1,4 +1,4 @@
-import { Stage, TileType } from './stage';
+import { Stage, TileCoordinates, TileType } from './stage';
 import { loadImage, loadTileMap, Logger } from '../lib';
 import { Screen } from '../screen';
 
@@ -49,7 +49,10 @@ export class MarioWorld11 extends Stage {
     this.gridHeight = Math.floor(this.pixelHeight / this.tileHeight);
   }
 
-  getTile(gridX: number, gridY: number): TileType {
+  getTile(coordinates: TileCoordinates): TileType {
+    const gridX = coordinates.x;
+    const gridY = coordinates.y;
+
     if (gridY < 0 || gridY >= this.gridHeight) {
       // top and bottom edges are open
       return TileType.NULL;
@@ -82,7 +85,7 @@ export class MarioWorld11 extends Stage {
       let char: TileType;
       for (let x = gridX; x < gridX + this.gridWidth; x++) {
         for (let y = gridY; y < gridY + this.gridHeight; y++) {
-          char = this.getTile(x, y);
+          char = this.getTile({ x, y });
           if (char === TileType.SOLID) {
             screen.drawRectangle(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight, {
               color: 'white',
