@@ -17,8 +17,9 @@ export interface ICharacter {
   render: (screen: Screen) => void;
   runRight: () => void;
   runLeft: () => void;
-  jump: () => void;
   stop: () => void;
+  jump: () => void;
+  land: () => void;
   toString: () => string;
 }
 
@@ -38,6 +39,7 @@ export class Character implements ICharacter {
   private _width: number;
   private _height: number;
   private _logger: Logger;
+  private _isGrounded: boolean;
 
   constructor(x: number, y: number) {
     this.x = x;
@@ -50,6 +52,8 @@ export class Character implements ICharacter {
 
     this.direction = CharacterDirection.RIGHT;
     this._logger = new Logger();
+
+    this._isGrounded = false;
   }
 
   get width() {
@@ -65,7 +69,7 @@ export class Character implements ICharacter {
   }
 
   get grounded(): boolean {
-    return this.vy === 0;
+    return this._isGrounded;
   }
 
   get moving(): boolean {
@@ -84,15 +88,24 @@ export class Character implements ICharacter {
     this.vx = -5;
   }
 
+  stop() {
+    this._logger.info('character stop');
+    this.vx = 0;
+  }
+
   jump() {
     this._logger.info('character jump');
     const jumpVelocity = 16;
     this.vy = -jumpVelocity;
+    this._isGrounded = false;
   }
 
-  stop() {
-    this._logger.info('character stop');
-    this.vx = 0;
+  /*
+   * This needs to be called when the character hits the ground
+   */
+  land() {
+    this.vy = 0;
+    this._isGrounded = true;
   }
 
   render(screen: Screen) {

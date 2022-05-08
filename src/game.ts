@@ -69,7 +69,7 @@ export class Game {
       if (this.stage.getTile(characterBottomTileX, characterBottomTileY) === TileType.SOLID) {
         // move to top of tile
         this.character.y = characterBottomTileY * 16 - 16;
-        this.character.vy = 0;
+        this.character.land();
       }
     } else if (this.character.vy < 0) {
       // going up
