@@ -18,7 +18,9 @@ export interface ICharacter {
   runRight: () => void;
   runLeft: () => void;
   stop: () => void;
-  jump: () => void;
+  jumpUp: () => void;
+  jumpRight: () => void;
+  jumpLeft: () => void;
   land: () => void;
   toString: () => string;
 }
@@ -93,11 +95,23 @@ export class Character implements ICharacter {
     this.vx = 0;
   }
 
-  jump() {
-    this._logger.info('character jump');
+  jumpUp() {
+    this._logger.info('character jump up');
     const jumpVelocity = 16;
     this.vy = -jumpVelocity;
     this._isGrounded = false;
+  }
+
+  jumpRight() {
+    this.jumpUp();
+    this._logger.info('and to the right');
+    this.vx = 5;
+  }
+
+  jumpLeft() {
+    this.jumpUp();
+    this._logger.info('and to the left');
+    this.vx = -5;
   }
 
   /*

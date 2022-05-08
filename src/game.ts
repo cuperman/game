@@ -39,7 +39,13 @@ export class Game {
 
   processInput() {
     if (this.controller.action && this.character.grounded) {
-      this.character.jump();
+      if (this.controller.right) {
+        this.character.jumpRight();
+      } else if (this.controller.left) {
+        this.character.jumpLeft();
+      } else {
+        this.character.jumpUp();
+      }
     } else if (this.controller.right && this.character.grounded) {
       this.character.runRight();
     } else if (this.controller.left && this.character.grounded) {
