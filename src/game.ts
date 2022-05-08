@@ -16,6 +16,7 @@ export class Game {
   private isGameOver: boolean;
   private collisionTiles: Set<string>;
   private drawCollisions: boolean;
+  private drawController: boolean;
 
   constructor() {
     this.screen = new Screen(320, 240);
@@ -35,6 +36,7 @@ export class Game {
     this.isGameOver = false;
     this.collisionTiles = new Set<string>();
     this.drawCollisions = false;
+    this.drawController = false;
   }
 
   processInput() {
@@ -138,7 +140,10 @@ export class Game {
 
     this.stage.render(this.screen);
     this.character.render(this.screen);
-    this.controller.render(this.screen);
+
+    if (this.drawController) {
+      this.controller.render(this.screen);
+    }
 
     if (this.drawCollisions) {
       this.collisionTiles.forEach((tile) => {
