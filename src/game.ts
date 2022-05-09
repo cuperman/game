@@ -1,7 +1,7 @@
 import { Character, ICharacter, Link, Mario, Tester } from './characters';
 import { Controller } from './controller';
 import { IStage, MarioWorld11, Stage, TileType, MarioWorld1Fds } from './stages';
-import { sleep, Logger } from './lib';
+import { Logger, requestAnimationFrame } from './lib';
 import { Screen } from './screen';
 
 export class Game {
@@ -15,9 +15,12 @@ export class Game {
   private running: boolean;
   private isGameOver: boolean;
   private collisionTiles: Set<string>;
+
   private drawCollisions: boolean;
   private drawController: boolean;
-  private lastPhysicsRun: number;
+  private drawFramerate: boolean;
+
+  private lastLoop: DOMHighResTimeStamp;
   private gravityAcceleration: number;
 
   constructor() {
@@ -38,10 +41,12 @@ export class Game {
     this.running = false;
     this.isGameOver = false;
     this.collisionTiles = new Set<string>();
+
     this.drawCollisions = false;
     this.drawController = false;
-    this.lastPhysicsRun = new Date().getTime();
+    this.drawFramerate = false;
 
+    this.lastLoop = performance.now();
     this.gravityAcceleration = 0.0001; // tiles/ms/ms
   }
 
@@ -63,11 +68,7 @@ export class Game {
     }
   }
 
-  applyPhysics(): void {
-    const now = new Date().getTime();
-    const elapsed = now - this.lastPhysicsRun; // ms elapsed since last run
-    this.lastPhysicsRun = now; // save current time for next run
-
+  applyPhysics(elapsed: number): void {
     // apply gravity
     this.character.accelerate(0, this.gravityAcceleration, elapsed);
 
@@ -142,7 +143,7 @@ export class Game {
     await Promise.all([stageLoaded, marioLoaded]);
   }
 
-  render(): void {
+  render(elapsed: number): void {
     this.logger.diff('screen', this.screen.toString());
     this.logger.diff('character ', this.character.toString());
 
@@ -156,13 +157,18 @@ export class Game {
     if (this.drawCollisions) {
       this.collisionTiles.forEach((tile) => {
         const tileCoords = JSON.parse(tile);
-        this.screen.drawRectangle(tileCoords.x * 16, tileCoords.y * 16, 16, 16, {
+        this.screen.drawRectangle(Math.round(tileCoords.x * 16), Math.round(tileCoords.y * 16), 16, 16, {
           color: 'yellow',
           fill: true,
           alpha: 0.5,
           offset: true,
         });
       });
+    }
+
+    if (this.drawFramerate) {
+      const framerate = 1 / (elapsed / 1000); // (frames / second)
+      this.screen.drawText(`framerate: ${framerate.toFixed(2)}`, 320 - 90, 240 - 5);
     }
   }
 
@@ -176,28 +182,19 @@ export class Game {
     this.logger.info('starting game...');
     this.running = true;
 
-    const targetFrameRate = 30;
-    this.logger.info('target framerate', 30);
-
-    const maxDelay = 1000 / targetFrameRate;
-
     // start game loop
     while (this.running) {
-      const start = new Date().getTime();
+      const now = await requestAnimationFrame();
+      const elapsed = now - this.lastLoop;
+      this.lastLoop = now;
 
       if (this.isGameOver) {
         this.renderGameOver();
       } else {
         this.processInput();
-        this.applyPhysics();
+        this.applyPhysics(elapsed);
         this.offsetScreen();
-        this.render();
-      }
-
-      const end = new Date().getTime();
-      const delay = maxDelay - (end - start);
-      if (delay > 0) {
-        await sleep(delay);
+        this.render(elapsed);
       }
     }
   }
