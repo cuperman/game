@@ -55,7 +55,14 @@ export interface ICharacter {
   peak: () => void;
   land: () => void;
 
-  accelerate: (xAcceleration: number, yAccelleration: number) => void;
+  /**
+   * Increase the velocity in each direction by this amount
+   * @param ax - horizontal acceleration (tiles/ms/ms)
+   * @param ay - vertical acceleration (tiles/ms/ms)
+   * @param t - elapsed time (ms)
+   */
+  accelerate: (ax: number, ay: number, t: number) => void;
+
   translate: (x: number, y: number) => void;
   moveTo: (x: number, y: number) => void;
 
@@ -83,6 +90,8 @@ export class Character implements ICharacter {
   private _vy: number;
   private _logger: Logger;
   private _isGrounded: boolean;
+  private _runVelocity: number;
+  private _jumpVelocity: number;
 
   constructor(x: number, y: number) {
     this._x = x;
@@ -97,6 +106,9 @@ export class Character implements ICharacter {
     this._logger = new Logger();
 
     this._isGrounded = false;
+
+    this._runVelocity = 1 / 120;
+    this._jumpVelocity = 1 / 32;
   }
 
   get x() {
@@ -138,13 +150,13 @@ export class Character implements ICharacter {
   runRight() {
     this._logger.info('character run right');
     this.direction = CharacterDirection.RIGHT;
-    this._vx = 0.3125; // 5/16
+    this._vx = this._runVelocity;
   }
 
   runLeft() {
     this._logger.info('character run left');
     this.direction = CharacterDirection.LEFT;
-    this._vx = -0.3125; // 5/16
+    this._vx = -this._runVelocity;
   }
 
   stop() {
@@ -154,7 +166,7 @@ export class Character implements ICharacter {
 
   jumpUp() {
     this._logger.info('character jump up');
-    const jumpVelocity = 1;
+    const jumpVelocity = this._jumpVelocity;
     this._vy = -jumpVelocity;
     this._isGrounded = false;
   }
@@ -162,13 +174,13 @@ export class Character implements ICharacter {
   jumpRight() {
     this.jumpUp();
     this._logger.info('and to the right');
-    this._vx = 0.3125; // 5/16
+    this._vx = this._runVelocity;
   }
 
   jumpLeft() {
     this.jumpUp();
     this._logger.info('and to the left');
-    this._vx = -0.3125; // 5/16
+    this._vx = -this._runVelocity;
   }
 
   /*
@@ -186,9 +198,9 @@ export class Character implements ICharacter {
     this._isGrounded = true;
   }
 
-  accelerate(xAcceleration: number, yAcceleration: number): void {
-    this._vx = this._vx + xAcceleration;
-    this._vy = this._vy + yAcceleration;
+  accelerate(ax: number, ay: number, t: number): void {
+    this._vx += ax * t;
+    this._vy += ay * t;
   }
 
   translate(x: number, y: number): void {

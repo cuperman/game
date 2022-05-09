@@ -1,17 +1,19 @@
 import { Character, CharacterDirection } from './character';
-import { loadImage, applyAlpha } from '../lib';
+import { loadImage, applyAlpha, Logger } from '../lib';
 import { Screen } from '../screen';
 
 export class Link extends Character {
   private sprites: ImageBitmap;
   private frame: number;
   private drawBoundingBox: boolean;
+  private logger: Logger;
 
   constructor(x: number, y: number) {
     super(x, y);
 
     this._width = 1;
     this._height = 2;
+    this.logger = new Logger();
     this.drawBoundingBox = false;
   }
 
@@ -70,9 +72,11 @@ export class Link extends Character {
       }
     } else if (this.direction === CharacterDirection.LEFT) {
       // standing facing left
+      this.logger.diff('drawSpriteFlipped', JSON.stringify([1, 11, pixelWidth, pixelHeight, pixelX, pixelY]));
       screen.drawSpriteFlipped(this.sprites, 1, 11, pixelWidth, pixelHeight, pixelX, pixelY);
     } else {
       // standing facing right
+      this.logger.diff('drawSprite', JSON.stringify([1, 11, pixelWidth, pixelHeight, pixelX, pixelY]));
       screen.drawSprite(this.sprites, 1, 11, pixelWidth, pixelHeight, pixelX, pixelY);
     }
   }

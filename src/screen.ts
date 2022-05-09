@@ -17,8 +17,8 @@ export class Screen {
   private context: CanvasRenderingContext2D;
 
   constructor(width: number, height: number) {
-    this.width = width;
-    this.height = height;
+    this.width = Math.round(width);
+    this.height = Math.round(height);
     this.xOffset = 0;
     this.yOffset = 0;
 
@@ -44,7 +44,17 @@ export class Screen {
   }
 
   drawBackground(image: CanvasImageSource) {
-    this.context.drawImage(image, this.xOffset, this.yOffset, this.width, this.height, 0, 0, this.width, this.height);
+    this.context.drawImage(
+      image,
+      Math.round(this.xOffset),
+      Math.round(this.yOffset),
+      this.width,
+      this.height,
+      0,
+      0,
+      this.width,
+      this.height,
+    );
   }
 
   drawSprite(
@@ -58,7 +68,17 @@ export class Screen {
     dw?: number,
     dh?: number,
   ) {
-    this.context.drawImage(image, sx, sy, sw, sh, dx - this.xOffset, dy - this.yOffset, dw || sw, dh || sh);
+    this.context.drawImage(
+      image,
+      sx,
+      sy,
+      sw,
+      sh,
+      dx - Math.round(this.xOffset),
+      dy - Math.round(this.yOffset),
+      dw || sw,
+      dh || sh,
+    );
   }
 
   drawSpriteFlipped(
@@ -79,8 +99,8 @@ export class Screen {
       sy,
       sw,
       sh,
-      -dx - (dw || sw) + this.xOffset,
-      dy - this.yOffset,
+      -dx - (dw || sw) + Math.round(this.xOffset),
+      dy - Math.round(this.yOffset),
       dw || sw,
       dh || sh,
     );

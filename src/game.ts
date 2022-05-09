@@ -17,6 +17,8 @@ export class Game {
   private collisionTiles: Set<string>;
   private drawCollisions: boolean;
   private drawController: boolean;
+  private lastPhysicsRun: number;
+  private gravityAcceleration: number;
 
   constructor() {
     this.screen = new Screen(320, 240);
@@ -28,8 +30,8 @@ export class Game {
 
     // this.character = new Character(0, 0);
     // this.character = new Tester(0, 0);
-    // this.character = new Mario(0, 0);
-    this.character = new Link(0, 0);
+    this.character = new Mario(0, 0);
+    // this.character = new Link(0, 0);
 
     this.logger = new Logger();
 
@@ -38,9 +40,12 @@ export class Game {
     this.collisionTiles = new Set<string>();
     this.drawCollisions = false;
     this.drawController = false;
+    this.lastPhysicsRun = new Date().getTime();
+
+    this.gravityAcceleration = 0.0001; // tiles/ms/ms
   }
 
-  processInput() {
+  processInput(): void {
     if (this.controller.action && this.character.grounded) {
       if (this.controller.right) {
         this.character.jumpRight();
@@ -58,14 +63,16 @@ export class Game {
     }
   }
 
-  applyPhysics() {
-    const gravityAcceleration = 0.1; // tiles/second/second
+  applyPhysics(): void {
+    const now = new Date().getTime();
+    const elapsed = now - this.lastPhysicsRun; // ms elapsed since last run
+    this.lastPhysicsRun = now; // save current time for next run
 
     // apply gravity
-    this.character.accelerate(0, gravityAcceleration);
+    this.character.accelerate(0, this.gravityAcceleration, elapsed);
 
     // move objects
-    this.character.translate(this.character.vx, this.character.vy);
+    this.character.translate(this.character.vx * elapsed, this.character.vy * elapsed);
 
     // apply collisions
 
@@ -118,7 +125,7 @@ export class Game {
   }
 
   // note: screen coordinates and lengths are in pixels units
-  offsetScreen() {
+  offsetScreen(): void {
     if (this.character.x * 16 <= this.screen.width / 2) {
       this.screen.xOffset = 0;
     } else if (this.character.x * 16 > this.stage.pixelWidth - this.screen.width / 2) {
@@ -128,14 +135,14 @@ export class Game {
     }
   }
 
-  async load() {
+  async load(): Promise<void> {
     const stageLoaded = this.stage.load();
     const marioLoaded = this.character.load();
 
     await Promise.all([stageLoaded, marioLoaded]);
   }
 
-  render() {
+  render(): void {
     this.logger.diff('screen', this.screen.toString());
     this.logger.diff('character ', this.character.toString());
 
@@ -159,7 +166,7 @@ export class Game {
     }
   }
 
-  renderGameOver() {
+  renderGameOver(): void {
     this.screen.drawText('GAME OVER', 320 / 2, 240 / 2);
     this.logger.diff('GAME OVER', ':(');
     return;
