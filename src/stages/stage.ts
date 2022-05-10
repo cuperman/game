@@ -81,5 +81,6 @@ export class Stage implements IStage {
 
   render(screen: Screen): void {
     screen.drawRectangle(0, 0, this.pixelWidth, this.pixelHeight, { color: 'LightSkyBlue', fill: true });
+    screen.drawRectangle(0, 14 * 16, this.pixelWidth, 1 * 16, { color: 'NavajoWhite', fill: true });
   }
 }
