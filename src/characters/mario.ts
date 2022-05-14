@@ -1,14 +1,29 @@
 import { Character, CharacterDirection } from './character';
-import { loadImage, applyAlpha } from '../lib';
+import { loadImage, applyAlpha, getAnimationFrame, FrameRate } from '../lib';
 import { Screen } from '../screen';
+
+interface AnimationFrame {
+  readonly x: number;
+  readonly y: number;
+}
+
+const ANIMATION_MAP: { [name: string]: AnimationFrame[] } = {
+  run: [
+    { x: 20, y: 8 },
+    { x: 38, y: 8 },
+    { x: 56, y: 8 },
+  ],
+};
 
 export class Mario extends Character {
   private sprites: ImageBitmap;
-  private frame: number;
   private drawBoundingBox: boolean;
+  private animationElapsed: number;
 
   constructor(x: number, y: number) {
     super(x, y);
+
+    this.animationElapsed = 0;
   }
 
   async load() {
@@ -17,7 +32,13 @@ export class Mario extends Character {
     this.sprites = sprites;
   }
 
-  render(screen: Screen) {
+  render(screen: Screen, elapsed: DOMHighResTimeStamp) {
+    if (this.running) {
+      this.animationElapsed += elapsed;
+    } else {
+      this.animationElapsed = 0;
+    }
+
     const tileWidth = 16; // pixels
     const tileHeight = 16; // pixels
 
@@ -25,6 +46,9 @@ export class Mario extends Character {
     const pixelY = Math.round(this.y * tileHeight);
     const pixelWidth = Math.round(this.width * tileWidth);
     const pixelHeight = Math.round(this.height * tileHeight);
+
+    const frameIndex = getAnimationFrame(ANIMATION_MAP.run.length, FrameRate.TWELVE_FPS, this.animationElapsed);
+    const frame = ANIMATION_MAP.run[frameIndex];
 
     if (this.drawBoundingBox) {
       screen.drawRectangle(pixelX, pixelY, 16, 16, { color: 'white', alpha: 0.5, fill: true, offset: true });
@@ -38,28 +62,10 @@ export class Mario extends Character {
       screen.drawSpriteFlipped(this.sprites, 96, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
     } else if (this.vx < 0 && this.grounded) {
       // run left
-      if (this.frame === 0) {
-        screen.drawSpriteFlipped(this.sprites, 20, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
-        this.frame = 1;
-      } else if (this.frame === 1) {
-        screen.drawSpriteFlipped(this.sprites, 38, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
-        this.frame = 2;
-      } else {
-        screen.drawSpriteFlipped(this.sprites, 56, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
-        this.frame = 0;
-      }
+      screen.drawSpriteFlipped(this.sprites, frame.x, frame.y, pixelWidth, pixelHeight, pixelX, pixelY);
     } else if (this.vx > 0 && this.grounded) {
       // run right
-      if (this.frame === 0) {
-        screen.drawSprite(this.sprites, 20, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
-        this.frame = 1;
-      } else if (this.frame === 1) {
-        screen.drawSprite(this.sprites, 38, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
-        this.frame = 2;
-      } else {
-        screen.drawSprite(this.sprites, 56, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);
-        this.frame = 0;
-      }
+      screen.drawSprite(this.sprites, frame.x, frame.y, pixelWidth, pixelHeight, pixelX, pixelY);
     } else if (this.direction === CharacterDirection.LEFT) {
       // standing facing left
       screen.drawSpriteFlipped(this.sprites, 0, 8, pixelWidth, pixelHeight, pixelX, pixelY, pixelWidth, pixelHeight);

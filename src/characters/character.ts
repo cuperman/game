@@ -44,7 +44,7 @@ export interface ICharacter {
   readonly moving: boolean;
 
   load: () => Promise<void>;
-  render: (screen: Screen) => void;
+  render: (screen: Screen, elapsed: DOMHighResTimeStamp) => void;
 
   runRight: () => void;
   runLeft: () => void;
@@ -141,6 +141,14 @@ export class Character implements ICharacter {
 
   get moving(): boolean {
     return this.vx !== 0 || this.vy !== 0;
+  }
+
+  get running(): boolean {
+    return this.moving && this.grounded;
+  }
+
+  get jumping(): boolean {
+    return this.moving && !this.grounded;
   }
 
   async load() {
@@ -249,7 +257,7 @@ export class Character implements ICharacter {
     return { x: right, y: middle };
   }
 
-  render(screen: Screen) {
+  render(screen: Screen, elapsed: DOMHighResTimeStamp) {
     const tileWidth = 16; // pixels
     const tileHeight = 16; // pixels
 
