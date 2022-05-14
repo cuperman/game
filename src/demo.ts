@@ -1,4 +1,4 @@
-import { Link, Mario } from './characters';
+import { Link, Mario, Ryu } from './characters';
 import { Screen } from './screen';
 import { requestAnimationFrame } from './lib';
 
@@ -7,9 +7,9 @@ async function main() {
   document.body.appendChild(screen.canvas.element);
 
   const characters = {
-    idle: [new Mario(1, 1), new Link(3, 1)],
-    running: [new Mario(1, 4), new Link(3, 4)],
-    jumping: [new Mario(1, 7), new Link(3, 7)],
+    idle: [new Mario(1, 1), new Link(3, 1), new Ryu(5, 1)],
+    running: [new Mario(1, 4), new Link(3, 4), new Ryu(5, 4)],
+    jumping: [new Mario(1, 7), new Link(3, 7), new Ryu(5, 7)],
   };
 
   await Promise.all(
