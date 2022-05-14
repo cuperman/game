@@ -12,6 +12,7 @@ export class Game {
 
   private stage: IStage;
   private character: ICharacter;
+
   private running: boolean;
   private isGameOver: boolean;
   private collisionTiles: Set<string>;
@@ -148,7 +149,7 @@ export class Game {
     this.logger.diff('character ', this.character.toString());
 
     this.stage.render(this.screen);
-    this.character.render(this.screen);
+    this.character.render(this.screen, elapsed);
 
     if (this.drawController) {
       this.controller.render(this.screen);

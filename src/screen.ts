@@ -1,5 +1,8 @@
 import { Canvas } from './lib';
 
+// FIXME: this is an assumption
+const TILE_WIDTH = 16;
+
 export interface RectangleOptions {
   readonly color?: string;
   readonly offset?: boolean;
@@ -27,8 +30,8 @@ export class Screen {
   }
 
   drawRectangle(x: number, y: number, w: number, h: number, options: RectangleOptions = {}) {
-    const rectX = typeof options.offset !== 'undefined' ? x - this.xOffset : x;
-    const rectY = typeof options.offset !== 'undefined' ? y - this.yOffset : y;
+    const rectX = typeof options.offset !== 'undefined' ? Math.round(x - this.xOffset) : x;
+    const rectY = typeof options.offset !== 'undefined' ? Math.round(y - this.yOffset) : y;
 
     this.context.globalAlpha = typeof options.alpha !== 'undefined' ? options.alpha : 1;
 
@@ -99,7 +102,7 @@ export class Screen {
       sy,
       sw,
       sh,
-      -dx - (dw || sw) + Math.round(this.xOffset),
+      -dx - TILE_WIDTH + Math.round(this.xOffset),
       dy - Math.round(this.yOffset),
       dw || sw,
       dh || sh,

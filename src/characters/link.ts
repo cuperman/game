@@ -1,12 +1,25 @@
 import { Character, CharacterDirection } from './character';
-import { loadImage, applyAlpha, Logger } from '../lib';
+import { loadImage, applyAlpha, Logger, getAnimationFrame, FrameRate } from '../lib';
 import { Screen } from '../screen';
+
+interface AnimationFrame {
+  readonly x: number;
+  readonly y: number;
+}
+
+const ANIMATION_MAP: { [name: string]: AnimationFrame[] } = {
+  run: [
+    { x: 29, y: 11 },
+    { x: 46, y: 11 },
+    { x: 63, y: 11 },
+  ],
+};
 
 export class Link extends Character {
   private sprites: ImageBitmap;
-  private frame: number;
   private drawBoundingBox: boolean;
   private logger: Logger;
+  private animationElapsed: number;
 
   constructor(x: number, y: number) {
     super(x, y);
@@ -15,6 +28,7 @@ export class Link extends Character {
     this._height = 2;
     this.logger = new Logger();
     this.drawBoundingBox = false;
+    this.animationElapsed = 0;
   }
 
   async load() {
@@ -22,7 +36,13 @@ export class Link extends Character {
     this.sprites = await loadImage('/img/zelda-sprites.png').then((image) => applyAlpha(image, alphaColor));
   }
 
-  render(screen: Screen) {
+  render(screen: Screen, elapsed: DOMHighResTimeStamp) {
+    if (this.running) {
+      this.animationElapsed += elapsed;
+    } else {
+      this.animationElapsed = 0;
+    }
+
     const tileWidth = 16; // pixels
     const tileHeight = 16; // pixels
 
@@ -30,6 +50,9 @@ export class Link extends Character {
     const pixelY = Math.round(this.y * tileHeight);
     const pixelWidth = Math.round(this.width * tileWidth);
     const pixelHeight = Math.round(this.height * tileHeight);
+
+    const frameIndex = getAnimationFrame(ANIMATION_MAP.run.length, FrameRate.TWELVE_FPS, this.animationElapsed);
+    const frame = ANIMATION_MAP.run[frameIndex];
 
     if (this.drawBoundingBox) {
       screen.drawRectangle(pixelX, pixelY, pixelWidth, pixelHeight, {
@@ -48,28 +71,10 @@ export class Link extends Character {
       screen.drawSpriteFlipped(this.sprites, 134, 11, pixelWidth, pixelHeight, pixelX, pixelY);
     } else if (this.vx < 0 && this.grounded) {
       // run left
-      if (this.frame === 0) {
-        screen.drawSpriteFlipped(this.sprites, 29, 11, pixelWidth, pixelHeight, pixelX, pixelY);
-        this.frame = 1;
-      } else if (this.frame === 1) {
-        screen.drawSpriteFlipped(this.sprites, 46, 11, pixelWidth, pixelHeight, pixelX, pixelY);
-        this.frame = 2;
-      } else {
-        screen.drawSpriteFlipped(this.sprites, 63, 11, pixelWidth, pixelHeight, pixelX, pixelY);
-        this.frame = 0;
-      }
+      screen.drawSpriteFlipped(this.sprites, frame.x, frame.y, pixelWidth, pixelHeight, pixelX, pixelY);
     } else if (this.vx > 0 && this.grounded) {
       // run right
-      if (this.frame === 0) {
-        screen.drawSprite(this.sprites, 29, 11, pixelWidth, pixelHeight, pixelX, pixelY);
-        this.frame = 1;
-      } else if (this.frame === 1) {
-        screen.drawSprite(this.sprites, 46, 11, pixelWidth, pixelHeight, pixelX, pixelY);
-        this.frame = 2;
-      } else {
-        screen.drawSprite(this.sprites, 63, 11, pixelWidth, pixelHeight, pixelX, pixelY);
-        this.frame = 0;
-      }
+      screen.drawSprite(this.sprites, frame.x, frame.y, pixelWidth, pixelHeight, pixelX, pixelY);
     } else if (this.direction === CharacterDirection.LEFT) {
       // standing facing left
       this.logger.diff('drawSpriteFlipped', JSON.stringify([1, 11, pixelWidth, pixelHeight, pixelX, pixelY]));
