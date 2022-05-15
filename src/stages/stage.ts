@@ -96,6 +96,7 @@ export class Stage implements IStage {
       } else {
         character.jumpUp();
       }
+      controller.releaseAction();
     } else if (controller.right && character.grounded) {
       character.runRight();
     } else if (controller.left && character.grounded) {
