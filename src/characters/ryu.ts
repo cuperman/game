@@ -10,6 +10,7 @@ export class Ryu extends SpriteCharacter {
       spriteMapPath: '/img/ninja-gaiden-sprites.png',
       spriteMapAlpha: { r: 116, g: 116, b: 116 },
       spriteMapCoords: {
+        profile: [[{ x: 2, y: 21, w: 16, h: 16, xo: 0, yo: 0 }]],
         idle: [
           [
             { x: 2, y: 21, w: 16, h: 16, xo: 0, yo: 0 },
@@ -42,5 +43,6 @@ export class Ryu extends SpriteCharacter {
     // FIXME
     this._width = 1;
     this._height = 2;
+    this._name = 'Ryu Hayabusa';
   }
 }

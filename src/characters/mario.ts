@@ -10,6 +10,7 @@ export class Mario extends SpriteCharacter {
       spriteMapPath: '/img/mario-sprites.png',
       spriteMapAlpha: { r: 146, g: 144, b: 255 },
       spriteMapCoords: {
+        profile: [[{ x: 0, y: 8, w: 16, h: 16, xo: 0, yo: 0 }]],
         idle: [[{ x: 0, y: 8, w: 16, h: 16, xo: 0, yo: 0 }]],
         run: [
           [{ x: 20, y: 8, w: 16, h: 16, xo: 0, yo: 0 }],
@@ -23,5 +24,6 @@ export class Mario extends SpriteCharacter {
     // FIXME
     this._width = 1;
     this._height = 1;
+    this._name = 'Mario';
   }
 }
