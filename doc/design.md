@@ -4,6 +4,7 @@
 
 ```mermaid
 graph TD;
+    TitleScreen-->ChooseCharacter
     ChooseCharacter-->ChooseStage;
     ChooseStage-->PlayStage;
     PlayStage-->PauseGame;
@@ -11,4 +12,5 @@ graph TD;
     PauseGame-->ChooseSettings;
     ChooseSettings-->PauseGame;
     PlayStage-->GameOver;
+    GameOver-->TitleScreen;
 ```
