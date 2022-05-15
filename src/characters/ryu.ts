@@ -1,8 +1,8 @@
 import { FrameRate } from '../lib';
-import { SpriteCharacter } from './sprite_character';
+import { SpriteCharacter, SpriteCharacterOverrides } from './sprite_character';
 
 export class Ryu extends SpriteCharacter {
-  constructor(x: number, y: number) {
+  constructor(x: number, y: number, overrides?: SpriteCharacterOverrides) {
     super(x, y, {
       tileWidth: 16,
       tileHeight: 16,
@@ -38,6 +38,7 @@ export class Ryu extends SpriteCharacter {
           [{ x: 271, y: 21, w: 24, h: 16, xo: 0, yo: 0 }],
         ],
       },
+      ...overrides,
     });
 
     // FIXME

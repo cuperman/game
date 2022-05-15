@@ -1,8 +1,8 @@
 import { FrameRate } from '../lib';
-import { SpriteCharacter } from './sprite_character';
+import { SpriteCharacter, SpriteCharacterOverrides } from './sprite_character';
 
 export class Mario extends SpriteCharacter {
-  constructor(x: number, y: number) {
+  constructor(x: number, y: number, overrides?: SpriteCharacterOverrides) {
     super(x, y, {
       tileWidth: 16,
       tileHeight: 16,
@@ -19,6 +19,7 @@ export class Mario extends SpriteCharacter {
         ],
         jump: [[{ x: 96, y: 8, w: 16, h: 16, xo: 0, yo: 0 }]],
       },
+      ...overrides,
     });
 
     // FIXME
