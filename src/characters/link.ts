@@ -10,6 +10,7 @@ export class Link extends SpriteCharacter {
       spriteMapPath: '/img/zelda-sprites.png',
       spriteMapAlpha: { r: 128, g: 0, b: 128 },
       spriteMapCoords: {
+        profile: [[{ x: 1, y: 11, w: 16, h: 16, xo: 0, yo: 0 }]],
         idle: [[{ x: 1, y: 11, w: 16, h: 32, xo: 0, yo: 0 }]],
         run: [
           [{ x: 29, y: 11, w: 16, h: 32, xo: 0, yo: 0 }],
@@ -23,5 +24,6 @@ export class Link extends SpriteCharacter {
     // FIXME
     this._width = 1;
     this._height = 2;
+    this._name = 'Link';
   }
 }

@@ -1,4 +1,4 @@
-import { Logger } from '../lib';
+import { Canvas, Logger } from '../lib';
 import { Screen } from '../screen';
 import { TileCoordinates } from '../stages';
 
@@ -43,8 +43,11 @@ export interface ICharacter {
    */
   readonly moving: boolean;
 
+  readonly name: string;
+
   load: () => Promise<void>;
   render: (screen: Screen, elapsed: DOMHighResTimeStamp) => void;
+  profileImage: () => Promise<ImageBitmap>;
 
   runRight: () => void;
   runLeft: () => void;
@@ -83,6 +86,7 @@ export class Character implements ICharacter {
   protected direction: CharacterDirection;
   protected _width: number;
   protected _height: number;
+  protected _name: string;
 
   private _x: number;
   private _y: number;
@@ -94,6 +98,8 @@ export class Character implements ICharacter {
   private _jumpVelocity: number;
 
   constructor(x: number, y: number) {
+    this._name = 'Character';
+
     this._x = x;
     this._y = y;
     this._vx = 0;
@@ -149,6 +155,10 @@ export class Character implements ICharacter {
 
   get jumping(): boolean {
     return this.moving && !this.grounded;
+  }
+
+  get name(): string {
+    return this._name;
   }
 
   async load() {
@@ -268,9 +278,18 @@ export class Character implements ICharacter {
 
     screen.drawRectangle(pixelX, pixelY, pixelWidth, pixelHeight, {
       fill: true,
-      color: 'white',
+      color: 'White',
       offset: true,
     });
+  }
+
+  profileImage(): Promise<ImageBitmap> {
+    const canvas = new Canvas(16, 16);
+    const context = canvas.get2DContext();
+    context.fillStyle = 'White';
+    context.fillRect(0, 0, 16, 16);
+
+    return createImageBitmap(canvas.element);
   }
 
   toString(): string {

@@ -1,4 +1,4 @@
-import { applyAlpha, Color, FrameRate, getAnimationFrame, loadImage } from '../lib';
+import { applyAlpha, Canvas, Color, FrameRate, getAnimationFrame, loadImage } from '../lib';
 import { Screen } from '../screen';
 import { Character, CharacterDirection } from './character';
 
@@ -12,6 +12,7 @@ export interface SpriteFrame {
 }
 
 export interface SpriteMapCoords {
+  readonly profile: SpriteFrame[][];
   readonly idle: SpriteFrame[][];
   readonly run: SpriteFrame[][];
   readonly jump: SpriteFrame[][];
@@ -28,8 +29,8 @@ export interface SpriteCharacterProps {
 }
 
 export class SpriteCharacter extends Character {
-  private tileWidth: number;
-  private tileHeight: number;
+  public tileWidth: number;
+  public tileHeight: number;
 
   private spriteMapPath: string;
   private spriteMapAlpha?: Color;
@@ -64,6 +65,14 @@ export class SpriteCharacter extends Character {
     } else {
       this.spriteMap = image;
     }
+  }
+
+  async profileImage(): Promise<ImageBitmap> {
+    const canvas = new Canvas(16, 16);
+    const context = canvas.get2DContext();
+    const frame = this.spriteMapCoords.profile[0][0];
+    context.drawImage(this.spriteMap, frame.x, frame.y, 16, 16, 0, 0, 16, 16);
+    return createImageBitmap(canvas.element);
   }
 
   render(screen: Screen, elapsed: DOMHighResTimeStamp) {
