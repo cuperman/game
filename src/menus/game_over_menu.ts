@@ -11,7 +11,8 @@ export class GameOverMenu extends Menu {
   }
 
   render(screen: Screen) {
-    screen.drawText('GAME OVER', screen.width / 2, screen.height / 2);
+    screen.drawRectangle(0, 0, screen.width, screen.height, { color: 'Black', fill: true, alpha: 0.5 });
+    screen.drawText('GAME OVER', screen.width / 2 - 32, screen.height / 2);
   }
 
   async open(screen: Screen) {
