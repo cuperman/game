@@ -66,12 +66,16 @@ export class CharacterMenu extends Menu {
   }
 
   processInput(controller: Controller): void {
-    if (controller.action) {
+    if (controller.action || controller.start) {
       this.select();
+      controller.releaseAction();
+      controller.releaseStart();
     } else if (controller.left) {
       this.cursorLeft();
+      controller.releaseLeft();
     } else if (controller.right) {
       this.cursorRight();
+      controller.releaseRight();
     }
   }
 
@@ -82,20 +86,25 @@ export class CharacterMenu extends Menu {
     const paddingMiddle = 6;
     const size = 32;
 
+    const xOffset = 24;
+    const yOffset = 60;
+
+    screen.drawText('Choose a character', xOffset, 32, { fontSize: 18 });
+
     this.characters.forEach(async (character, i) => {
       const profile = await character.profileImage();
       const dx = paddingEdge + i * paddingMiddle + i * size;
       const dy = paddingEdge;
 
-      screen.drawSprite(profile, 0, 0, profile.width, profile.height, dx, dy, size, size);
+      screen.drawSprite(profile, 0, 0, profile.width, profile.height, dx + xOffset, dy + yOffset, size, size);
 
       if (this.cursorIndex === i) {
-        screen.drawRectangle(dx, dy, size, size, { color: 'White', fill: false });
+        screen.drawRectangle(dx + xOffset, dy + yOffset, size, size, { color: 'White', fill: false });
       }
     });
 
     const selectedCharacter = this.characters[this.cursorIndex];
-    screen.drawText(selectedCharacter.name, 25, screen.height - 25);
+    screen.drawText(selectedCharacter.name, xOffset, screen.height - yOffset);
   }
 
   async open(screen: Screen, controller: Controller): Promise<CharacterMenuSettings> {

@@ -7,6 +7,7 @@ export class Controller {
   public left: boolean;
   public right: boolean;
   public action: boolean;
+  public start: boolean;
 
   private logger: Logger;
 
@@ -16,6 +17,7 @@ export class Controller {
     this.left = false;
     this.right = false;
     this.action = false;
+    this.start = false;
 
     this.logger = new Logger();
   }
@@ -38,6 +40,10 @@ export class Controller {
         break;
       case ' ':
         this.action = false;
+        break;
+      case 'Enter':
+        this.start = false;
+        break;
     }
   }
 
@@ -59,7 +65,35 @@ export class Controller {
         break;
       case ' ':
         this.action = true;
+        break;
+      case 'Enter':
+        this.start = true;
+        break;
     }
+  }
+
+  releaseUp() {
+    this.up = false;
+  }
+
+  releaseDown() {
+    this.down = false;
+  }
+
+  releaseLeft() {
+    this.left = false;
+  }
+
+  releaseRight() {
+    this.right = false;
+  }
+
+  releaseAction() {
+    this.action = false;
+  }
+
+  releaseStart() {
+    this.start = false;
   }
 
   render(screen: Screen) {
