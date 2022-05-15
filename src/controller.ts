@@ -48,6 +48,10 @@ export class Controller {
   }
 
   onKeyDown(event: KeyboardEvent) {
+    if (event.repeat) {
+      return;
+    }
+
     this.logger.info(`key down: "${event.key}"`);
 
     switch (event.key) {
