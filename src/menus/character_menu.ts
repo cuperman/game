@@ -1,7 +1,7 @@
 import { Menu, MenuSettings } from './menu';
 import { Screen } from '../screen';
 import { requestAnimationFrame } from '../lib';
-import { ICharacter, Link, Mario, Ryu } from '../characters';
+import { Bill, ICharacter, Link, Mario, MegaMan, Ryu, Samus, Simon } from '../characters';
 import { Controller } from '../controller';
 
 export interface CharacterMenuSettings extends MenuSettings {
@@ -24,19 +24,17 @@ export class CharacterMenu extends Menu {
   constructor() {
     super();
 
-    this.characters = [new Mario(0, 0), new Ryu(0, 0), new Link(0, 0)];
+    this.characters = [
+      new Simon(0, 0),
+      new Bill(0, 0),
+      new Mario(0, 0),
+      new MegaMan(0, 0),
+      new Samus(0, 0),
+      new Ryu(0, 0),
+      new Link(0, 0),
+    ];
     this.cursorIndex = 0;
     this.selected = false;
-
-    // this.options = [
-    //   { name: 'Simon Belmont', sprites: '/img/castlevania-sprites.png', profileX: 1, profileY: 21 },
-    //   { name: 'Bill Rizer', sprites: '/img/contra-sprites.png', profileX: 0, profileY: 7 },
-    //   { name: 'Mario', class: Mario, sprites: '/img/mario-sprites.png', profileX: 0, profileY: 8 },
-    //   { name: 'Mega Man', sprites: '/img/mega-man-sprites.png', profileX: 4, profileY: 21 },
-    //   { name: 'Samus', sprites: '/img/metroid-sprites.png', profileX: 1, profileY: 11 },
-    //   { name: 'Ryu Hayabusa', class: Ryu, sprites: '/img/ninja-gaiden-sprites.png', profileX: 2, profileY: 21 },
-    //   { name: 'Link', class: Link, sprites: '/img/zelda-sprites.png', profileX: 1, profileY: 11 },
-    // ];
   }
 
   cursorUp() {

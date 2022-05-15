@@ -1,15 +1,44 @@
-import { Link, Mario, Ryu } from './characters';
+import { Simon, Link, Mario, Ryu, Bill, MegaMan, Samus, SpriteCharacterOverrides } from './characters';
 import { Screen } from './screen';
-import { requestAnimationFrame } from './lib';
+import { FrameRate, requestAnimationFrame } from './lib';
 
 async function main() {
   const screen = new Screen(320, 240);
   document.body.appendChild(screen.canvas.element);
 
+  const characterOverrides: SpriteCharacterOverrides = {
+    animationFrameRate: FrameRate.TWO_FPS,
+    drawBoundingBoxes: true,
+  };
+
   const characters = {
-    idle: [new Mario(1, 1), new Link(3, 1), new Ryu(5, 1)],
-    running: [new Mario(1, 4), new Link(3, 4), new Ryu(5, 4)],
-    jumping: [new Mario(1, 7), new Link(3, 7), new Ryu(5, 7)],
+    idle: [
+      new Simon(1, 1, characterOverrides),
+      new Bill(3, 1, characterOverrides),
+      new Mario(5, 1 + 1, characterOverrides),
+      new MegaMan(7, 1 + 0.5, characterOverrides),
+      new Samus(9, 1, characterOverrides),
+      new Ryu(11, 1, characterOverrides),
+      new Link(13, 1, characterOverrides),
+    ],
+    running: [
+      new Simon(1, 4, characterOverrides),
+      new Bill(3, 4, characterOverrides),
+      new Mario(5, 4 + 1, characterOverrides),
+      new MegaMan(7, 4 + 0.5, characterOverrides),
+      new Samus(9, 4, characterOverrides),
+      new Ryu(11, 4, characterOverrides),
+      new Link(13, 4, characterOverrides),
+    ],
+    jumping: [
+      new Simon(1, 7, characterOverrides),
+      new Bill(3, 7, characterOverrides),
+      new Mario(5, 7 + 1, characterOverrides),
+      new MegaMan(7, 7 + 0.5, characterOverrides),
+      new Samus(9, 7, characterOverrides),
+      new Ryu(11, 7, characterOverrides),
+      new Link(13, 7, characterOverrides),
+    ],
   };
 
   await Promise.all(

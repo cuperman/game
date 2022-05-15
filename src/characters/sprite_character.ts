@@ -25,7 +25,23 @@ export interface SpriteCharacterProps {
   readonly spriteMapPath: string;
   readonly spriteMapAlpha?: Color;
   readonly spriteMapCoords: SpriteMapCoords;
+  readonly spriteDirection?: CharacterDirection;
   readonly animationFrameRate: FrameRate;
+
+  readonly drawBoundingBoxes?: boolean;
+}
+
+export interface SpriteCharacterOverrides {
+  readonly tileWidth?: number;
+  readonly tileHeight?: number;
+
+  readonly spriteMapPath?: string;
+  readonly spriteMapAlpha?: Color;
+  readonly spriteMapCoords?: SpriteMapCoords;
+  readonly spriteDirection?: CharacterDirection;
+  readonly animationFrameRate?: FrameRate;
+
+  readonly drawBoundingBoxes?: boolean;
 }
 
 export class SpriteCharacter extends Character {
@@ -36,6 +52,7 @@ export class SpriteCharacter extends Character {
   private spriteMapAlpha?: Color;
   private spriteMapCoords: SpriteMapCoords;
   private spriteMap: ImageBitmap;
+  private spriteDirection: CharacterDirection;
 
   private animationFrameRate: FrameRate;
   private animationElapsed: number;
@@ -51,11 +68,13 @@ export class SpriteCharacter extends Character {
     this.spriteMapPath = props.spriteMapPath;
     this.spriteMapAlpha = props.spriteMapAlpha;
     this.spriteMapCoords = props.spriteMapCoords;
+    this.spriteDirection =
+      typeof props.spriteDirection !== 'undefined' ? props.spriteDirection : CharacterDirection.RIGHT;
 
     this.animationFrameRate = props.animationFrameRate;
     this.animationElapsed = 0;
 
-    this.drawBoundingBox = false;
+    this.drawBoundingBox = !!props.drawBoundingBoxes;
   }
 
   async load() {
@@ -101,7 +120,7 @@ export class SpriteCharacter extends Character {
 
     if (this.drawBoundingBox) {
       frames.forEach(({ w, h, xo, yo }) => {
-        if (this.direction === CharacterDirection.RIGHT) {
+        if (this.direction === this.spriteDirection) {
           screen.drawRectangle(pixelX + xo, pixelY + yo, w, h, boundingBoxOptions);
         } else {
           // FIXME
@@ -113,7 +132,7 @@ export class SpriteCharacter extends Character {
     }
 
     frames.forEach(({ x, y, w, h, xo, yo }) => {
-      if (this.direction === CharacterDirection.RIGHT) {
+      if (this.direction == this.spriteDirection) {
         screen.drawSprite(this.spriteMap, x, y, w, h, pixelX + xo, pixelY + yo);
       } else {
         screen.drawSpriteFlipped(this.spriteMap, x, y, w, h, pixelX - xo, pixelY + yo);
