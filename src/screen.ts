@@ -110,7 +110,11 @@ export class Screen {
     this.context.resetTransform();
   }
 
-  drawText(text: string, x: number, y: number) {
+  drawText(text: string, x: number, y: number, options?: { fontFamily?: string; fontSize?: number }) {
+    const fontFamily: string = options?.fontFamily || 'sans-serif';
+    const fontSize: number = options?.fontSize || 12;
+
+    this.context.font = `${fontSize}px ${fontFamily}`;
     this.context.fillStyle = 'white';
     this.context.fillText(text, x, y);
   }
