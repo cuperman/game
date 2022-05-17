@@ -104,11 +104,11 @@ export class Character implements ICharacter {
   private _runVelocity: number;
   private _jumpVelocity: number;
 
-  constructor(x: number, y: number, props: CharacterProps) {
+  constructor(props: CharacterProps) {
     this._name = props.name;
 
-    this._x = x;
-    this._y = y;
+    this._x = 0;
+    this._y = 0;
     this._vx = 0;
     this._vy = 0;
 

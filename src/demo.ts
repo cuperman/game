@@ -13,31 +13,31 @@ async function main() {
 
   const characters = {
     idle: [
-      new Simon(1, 1, characterOverrides),
-      new Bill(3, 1, characterOverrides),
-      new Mario(5, 1 + 1, characterOverrides),
-      new MegaMan(7, 1 + 0.5, characterOverrides),
-      new Samus(9, 1, characterOverrides),
-      new Ryu(11, 1, characterOverrides),
-      new Link(13, 1, characterOverrides),
+      new Simon(characterOverrides),
+      new Bill(characterOverrides),
+      new Mario(characterOverrides),
+      new MegaMan(characterOverrides),
+      new Samus(characterOverrides),
+      new Ryu(characterOverrides),
+      new Link(characterOverrides),
     ],
     running: [
-      new Simon(1, 4, characterOverrides),
-      new Bill(3, 4, characterOverrides),
-      new Mario(5, 4 + 1, characterOverrides),
-      new MegaMan(7, 4 + 0.5, characterOverrides),
-      new Samus(9, 4, characterOverrides),
-      new Ryu(11, 4, characterOverrides),
-      new Link(13, 4, characterOverrides),
+      new Simon(characterOverrides),
+      new Bill(characterOverrides),
+      new Mario(characterOverrides),
+      new MegaMan(characterOverrides),
+      new Samus(characterOverrides),
+      new Ryu(characterOverrides),
+      new Link(characterOverrides),
     ],
     jumping: [
-      new Simon(1, 7, characterOverrides),
-      new Bill(3, 7, characterOverrides),
-      new Mario(5, 7 + 1, characterOverrides),
-      new MegaMan(7, 7 + 0.5, characterOverrides),
-      new Samus(9, 7, characterOverrides),
-      new Ryu(11, 7, characterOverrides),
-      new Link(13, 7, characterOverrides),
+      new Simon(characterOverrides),
+      new Bill(characterOverrides),
+      new Mario(characterOverrides),
+      new MegaMan(characterOverrides),
+      new Samus(characterOverrides),
+      new Ryu(characterOverrides),
+      new Link(characterOverrides),
     ],
   };
 
@@ -74,13 +74,16 @@ async function main() {
     lastLoop = now;
 
     screen.drawRectangle(0, 0, 320, 240, { color: 'LightSkyBlue', fill: true });
-    characters.idle.forEach((character) => {
+    characters.idle.forEach((character, index) => {
+      character.moveTo(1 + index * 2, 1);
       character.render(screen, elapsed);
     });
-    characters.running.forEach((character) => {
+    characters.running.forEach((character, index) => {
+      character.moveTo(1 + index * 2, 4);
       character.render(screen, elapsed);
     });
-    characters.jumping.forEach((character) => {
+    characters.jumping.forEach((character, index) => {
+      character.moveTo(1 + index * 2, 7);
       character.render(screen, elapsed);
     });
   }
