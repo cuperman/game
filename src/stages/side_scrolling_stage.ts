@@ -2,6 +2,7 @@ import { Stage, TileCoordinates, TileType } from './stage';
 import { Screen } from '../screen';
 import { loadImage, loadTileMap } from '../lib';
 import { ICharacter } from '../characters';
+import { Controller } from '../controller';
 
 export interface SideScrollingStageProps {
   readonly tileWidth: number;
@@ -17,11 +18,6 @@ export class SideScrollingStage extends Stage {
   private backgroundTileMap: string;
   private backgroundTiles: string[][];
 
-  // private collisionTiles: Set<string>;
-  // private drawCollisions: boolean;
-  // private drawController: boolean;
-  // private drawFramerate: boolean;
-
   constructor(props: SideScrollingStageProps) {
     super();
 
@@ -30,11 +26,6 @@ export class SideScrollingStage extends Stage {
 
     this.backgroundImagePath = props.backgroundImagePath;
     this.backgroundTileMap = props.backgroundTileMap;
-
-    // this.collisionTiles = new Set<string>();
-    // this.drawCollisions = false;
-    // this.drawController = false;
-    // this.drawFramerate = false;
   }
 
   async load() {
@@ -74,52 +65,52 @@ export class SideScrollingStage extends Stage {
     }
   }
 
-  render(screen: Screen, elapsed: DOMHighResTimeStamp, character: ICharacter) {
-    // this.logger.diff('screen', this.screen.toString());
-    // this.logger.diff('character ', this.character.toString());
+  render(screen: Screen, elapsed: DOMHighResTimeStamp, character: ICharacter, controller: Controller) {
+    this.logger.diff('screen', screen.toString());
+    this.logger.diff('character ', character.toString());
 
     screen.drawBackground(this.backgroundImage);
     character.render(screen, elapsed);
 
-    // if (this.drawController) {
-    //   this.controller.render(this.screen);
-    // }
+    if (this.highlightTiles) {
+      const gridX = Math.floor(screen.xOffset / this.tileWidth);
+      const gridY = Math.floor(screen.yOffset / this.tileHeight);
 
-    // if (this.drawCollisions) {
-    //   this.collisionTiles.forEach((tile) => {
-    //     const tileCoords = JSON.parse(tile);
-    //     this.screen.drawRectangle(Math.round(tileCoords.x * 16), Math.round(tileCoords.y * 16), 16, 16, {
-    //       color: 'yellow',
-    //       fill: true,
-    //       alpha: 0.5,
-    //       offset: true,
-    //     });
-    //   });
-    // }
+      let char: TileType;
+      for (let x = gridX; x < gridX + this.gridWidth; x++) {
+        for (let y = gridY; y < gridY + this.gridHeight; y++) {
+          char = this.getTile({ x, y });
+          if (char === TileType.SOLID) {
+            screen.drawRectangle(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight, {
+              color: 'white',
+              fill: true,
+              alpha: 0.5,
+              offset: true,
+            });
+          }
+        }
+      }
+    }
 
-    // if (this.drawCollisions) {
-    //   const gridX = Math.floor(screen.xOffset / this.tileWidth);
-    //   const gridY = Math.floor(screen.yOffset / this.tileHeight);
+    if (this.highlightCollisions) {
+      this.collisionTiles.forEach((tile) => {
+        const tileCoords = JSON.parse(tile);
+        screen.drawRectangle(Math.round(tileCoords.x * 16), Math.round(tileCoords.y * 16), 16, 16, {
+          color: 'yellow',
+          fill: true,
+          alpha: 0.5,
+          offset: true,
+        });
+      });
+    }
 
-    //   let char: TileType;
-    //   for (let x = gridX; x < gridX + this.gridWidth; x++) {
-    //     for (let y = gridY; y < gridY + this.gridHeight; y++) {
-    //       char = this.getTile({ x, y });
-    //       if (char === TileType.SOLID) {
-    //         screen.drawRectangle(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight, {
-    //           color: 'white',
-    //           fill: true,
-    //           alpha: 0.5,
-    //           offset: true,
-    //         });
-    //       }
-    //     }
-    //   }
-    // }
+    if (this.drawController) {
+      controller.render(screen);
+    }
 
-    // if (this.drawFramerate) {
-    //   const framerate = 1 / (elapsed / 1000); // (frames / second)
-    //   this.screen.drawText(`framerate: ${framerate.toFixed(2)}`, 320 - 90, 240 - 5);
-    // }
+    if (this.drawFramerate) {
+      const framerate = 1 / (elapsed / 1000); // (frames / second)
+      screen.drawText(`framerate: ${framerate.toFixed(2)}`, 320 - 90, 240 - 5);
+    }
   }
 }
