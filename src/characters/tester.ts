@@ -6,7 +6,13 @@ export class Tester extends Character {
   private sprites: ImageBitmap;
 
   constructor(x: number, y: number) {
-    super(x, y);
+    super(x, y, {
+      name: 'Tester',
+      width: 1,
+      height: 1,
+      runVelocity: 1 / 120,
+      jumpVelocity: 1 / 32,
+    });
   }
 
   async load() {

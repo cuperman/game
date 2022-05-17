@@ -4,6 +4,11 @@ import { SpriteCharacter, SpriteCharacterOverrides } from './sprite_character';
 export class Bill extends SpriteCharacter {
   constructor(x: number, y: number, overrides?: SpriteCharacterOverrides) {
     super(x, y, {
+      name: 'Bill Rizer',
+      width: 1,
+      height: 2.125, // 34 pixels
+      runVelocity: 1 / 120,
+      jumpVelocity: 1 / 32,
       tileWidth: 16,
       tileHeight: 16,
       spriteMapPath: '/img/contra-sprites.png',
@@ -60,9 +65,5 @@ export class Bill extends SpriteCharacter {
       animationFrameRate: FrameRate.TWELVE_FPS,
       ...overrides,
     });
-
-    this._width = 1;
-    this._height = 2.125; // 34 pixels
-    this._name = 'Bill Rizer';
   }
 }

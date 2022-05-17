@@ -1,7 +1,13 @@
 import { Character } from '../character';
 
 describe('Character', () => {
-  const character = new Character(0, 0);
+  const character = new Character(0, 0, {
+    name: 'Character',
+    width: 1,
+    height: 1,
+    runVelocity: 1 / 120,
+    jumpVelocity: 1 / 32,
+  });
 
   describe('tileTop', () => {
     it('returns the tile that the top edge of character is in', () => {
