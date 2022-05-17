@@ -1,6 +1,6 @@
 import { applyAlpha, Canvas, Color, FrameRate, getAnimationFrame, loadImage } from '../lib';
 import { Screen } from '../screen';
-import { Character, CharacterDirection } from './character';
+import { Character, CharacterDirection, CharacterProps } from './character';
 
 export interface SpriteFrame {
   readonly x: number;
@@ -18,7 +18,7 @@ export interface SpriteMapCoords {
   readonly jump: SpriteFrame[][];
 }
 
-export interface SpriteCharacterProps {
+export interface SpriteCharacterProps extends CharacterProps {
   readonly tileWidth: number;
   readonly tileHeight: number;
 
@@ -60,7 +60,7 @@ export class SpriteCharacter extends Character {
   private drawBoundingBox: boolean;
 
   constructor(x: number, y: number, props: SpriteCharacterProps) {
-    super(x, y);
+    super(x, y, props);
 
     this.tileWidth = props.tileWidth;
     this.tileHeight = props.tileHeight;

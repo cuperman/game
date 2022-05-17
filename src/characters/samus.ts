@@ -4,6 +4,11 @@ import { SpriteCharacter, SpriteCharacterOverrides } from './sprite_character';
 export class Samus extends SpriteCharacter {
   constructor(x: number, y: number, overrides?: SpriteCharacterOverrides) {
     super(x, y, {
+      name: 'Samus',
+      width: 1,
+      height: 2,
+      runVelocity: 1 / 120,
+      jumpVelocity: 1 / 32,
       tileWidth: 16,
       tileHeight: 16,
       spriteMapPath: '/img/metroid-sprites.png',
@@ -41,9 +46,5 @@ export class Samus extends SpriteCharacter {
       animationFrameRate: FrameRate.TWELVE_FPS,
       ...overrides,
     });
-
-    this._width = 1;
-    this._height = 2;
-    this._name = 'Samus';
   }
 }

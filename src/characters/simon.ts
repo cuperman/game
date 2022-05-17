@@ -5,6 +5,11 @@ import { SpriteCharacter, SpriteCharacterOverrides } from './sprite_character';
 export class Simon extends SpriteCharacter {
   constructor(x: number, y: number, overrides?: SpriteCharacterOverrides) {
     super(x, y, {
+      name: 'Simon Belmont',
+      width: 1,
+      height: 2,
+      runVelocity: 1 / 120,
+      jumpVelocity: 1 / 32,
       tileWidth: 16,
       tileHeight: 16,
       spriteMapPath: '/img/castlevania-sprites.png',
@@ -23,9 +28,5 @@ export class Simon extends SpriteCharacter {
       animationFrameRate: FrameRate.TWELVE_FPS,
       ...overrides,
     });
-
-    this._width = 1;
-    this._height = 2;
-    this._name = 'Simon Belmont';
   }
 }

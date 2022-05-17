@@ -5,6 +5,11 @@ import { SpriteCharacter, SpriteCharacterOverrides } from './sprite_character';
 export class MegaMan extends SpriteCharacter {
   constructor(x: number, y: number, overrides?: SpriteCharacterOverrides) {
     super(x, y, {
+      name: 'Mega Man',
+      width: 1.5, // 24 pixels
+      height: 1.5, // 24 pixels
+      runVelocity: 1 / 120,
+      jumpVelocity: 1 / 32,
       tileWidth: 16,
       tileHeight: 16,
       spriteMapPath: '/img/mega-man-sprites.png',
@@ -41,9 +46,5 @@ export class MegaMan extends SpriteCharacter {
       animationFrameRate: FrameRate.TWELVE_FPS,
       ...overrides,
     });
-
-    this._width = 1.5; // 24 pixels
-    this._height = 1.5; // 24 pixels
-    this._name = 'Mega Man';
   }
 }

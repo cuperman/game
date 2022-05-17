@@ -4,6 +4,11 @@ import { SpriteCharacter, SpriteCharacterOverrides } from './sprite_character';
 export class Link extends SpriteCharacter {
   constructor(x: number, y: number, overrides?: SpriteCharacterOverrides) {
     super(x, y, {
+      name: 'Link',
+      width: 1,
+      height: 2,
+      runVelocity: 1 / 120,
+      jumpVelocity: 1 / 32,
       tileWidth: 16,
       tileHeight: 16,
       animationFrameRate: FrameRate.TWELVE_FPS,
@@ -21,10 +26,5 @@ export class Link extends SpriteCharacter {
       },
       ...overrides,
     });
-
-    // FIXME
-    this._width = 1;
-    this._height = 2;
-    this._name = 'Link';
   }
 }

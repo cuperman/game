@@ -82,12 +82,19 @@ export enum CharacterDirection {
   RIGHT = 'RIGHT',
 }
 
-export class Character implements ICharacter {
-  protected direction: CharacterDirection;
-  protected _width: number;
-  protected _height: number;
-  protected _name: string;
+export interface CharacterProps {
+  readonly name: string;
+  readonly width: number;
+  readonly height: number;
+  readonly runVelocity: number;
+  readonly jumpVelocity: number;
+}
 
+export class Character implements ICharacter {
+  private _direction: CharacterDirection;
+  private _width: number;
+  private _height: number;
+  private _name: string;
   private _x: number;
   private _y: number;
   private _vx: number;
@@ -97,24 +104,24 @@ export class Character implements ICharacter {
   private _runVelocity: number;
   private _jumpVelocity: number;
 
-  constructor(x: number, y: number) {
-    this._name = 'Character';
+  constructor(x: number, y: number, props: CharacterProps) {
+    this._name = props.name;
 
     this._x = x;
     this._y = y;
     this._vx = 0;
     this._vy = 0;
 
-    this._width = 1;
-    this._height = 1;
+    this._width = props.width;
+    this._height = props.height;
 
-    this.direction = CharacterDirection.RIGHT;
+    this._direction = CharacterDirection.RIGHT;
     this._logger = new Logger();
 
     this._isGrounded = false;
 
-    this._runVelocity = 1 / 120;
-    this._jumpVelocity = 1 / 32;
+    this._runVelocity = props.runVelocity;
+    this._jumpVelocity = props.jumpVelocity;
   }
 
   get x() {
@@ -161,19 +168,23 @@ export class Character implements ICharacter {
     return this._name;
   }
 
+  get direction(): CharacterDirection {
+    return this._direction;
+  }
+
   async load() {
     return;
   }
 
   runRight() {
     this._logger.info('character run right');
-    this.direction = CharacterDirection.RIGHT;
+    this._direction = CharacterDirection.RIGHT;
     this._vx = this._runVelocity;
   }
 
   runLeft() {
     this._logger.info('character run left');
-    this.direction = CharacterDirection.LEFT;
+    this._direction = CharacterDirection.LEFT;
     this._vx = -this._runVelocity;
   }
 
