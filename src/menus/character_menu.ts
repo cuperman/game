@@ -24,15 +24,7 @@ export class CharacterMenu extends Menu {
   constructor() {
     super();
 
-    this.characters = [
-      new Simon(0, 0),
-      new Bill(0, 0),
-      new Mario(0, 0),
-      new MegaMan(0, 0),
-      new Samus(0, 0),
-      new Ryu(0, 0),
-      new Link(0, 0),
-    ];
+    this.characters = [new Simon(), new Bill(), new Mario(), new MegaMan(), new Samus(), new Ryu(), new Link()];
     this.cursorIndex = 0;
     this.selected = false;
   }

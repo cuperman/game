@@ -5,8 +5,8 @@ import { Screen } from '../screen';
 export class Tester extends Character {
   private sprites: ImageBitmap;
 
-  constructor(x: number, y: number) {
-    super(x, y, {
+  constructor() {
+    super({
       name: 'Tester',
       width: 1,
       height: 1,

@@ -2,8 +2,8 @@ import { FrameRate } from '../lib';
 import { SpriteCharacter, SpriteCharacterOverrides } from './sprite_character';
 
 export class Samus extends SpriteCharacter {
-  constructor(x: number, y: number, overrides?: SpriteCharacterOverrides) {
-    super(x, y, {
+  constructor(overrides?: SpriteCharacterOverrides) {
+    super({
       name: 'Samus',
       width: 1,
       height: 2,

@@ -59,8 +59,8 @@ export class SpriteCharacter extends Character {
 
   private drawBoundingBox: boolean;
 
-  constructor(x: number, y: number, props: SpriteCharacterProps) {
-    super(x, y, props);
+  constructor(props: SpriteCharacterProps) {
+    super(props);
 
     this.tileWidth = props.tileWidth;
     this.tileHeight = props.tileHeight;

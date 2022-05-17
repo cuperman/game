@@ -1,7 +1,7 @@
 import { Character } from '../character';
 
 describe('Character', () => {
-  const character = new Character(0, 0, {
+  const character = new Character({
     name: 'Character',
     width: 1,
     height: 1,

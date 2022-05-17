@@ -1,7 +1,7 @@
 import { Link } from '../link';
 
 describe('Link', () => {
-  const link = new Link(0, 0);
+  const link = new Link();
 
   describe('height', () => {
     it('is 2', () => {

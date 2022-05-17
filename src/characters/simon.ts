@@ -3,8 +3,8 @@ import { CharacterDirection } from './character';
 import { SpriteCharacter, SpriteCharacterOverrides } from './sprite_character';
 
 export class Simon extends SpriteCharacter {
-  constructor(x: number, y: number, overrides?: SpriteCharacterOverrides) {
-    super(x, y, {
+  constructor(overrides?: SpriteCharacterOverrides) {
+    super({
       name: 'Simon Belmont',
       width: 1,
       height: 2,

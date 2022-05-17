@@ -2,8 +2,8 @@ import { FrameRate } from '../lib';
 import { SpriteCharacter, SpriteCharacterOverrides } from './sprite_character';
 
 export class Link extends SpriteCharacter {
-  constructor(x: number, y: number, overrides?: SpriteCharacterOverrides) {
-    super(x, y, {
+  constructor(overrides?: SpriteCharacterOverrides) {
+    super({
       name: 'Link',
       width: 1,
       height: 2,

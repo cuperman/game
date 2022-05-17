@@ -3,8 +3,8 @@ import { CharacterDirection } from './character';
 import { SpriteCharacter, SpriteCharacterOverrides } from './sprite_character';
 
 export class MegaMan extends SpriteCharacter {
-  constructor(x: number, y: number, overrides?: SpriteCharacterOverrides) {
-    super(x, y, {
+  constructor(overrides?: SpriteCharacterOverrides) {
+    super({
       name: 'Mega Man',
       width: 1.5, // 24 pixels
       height: 1.5, // 24 pixels
