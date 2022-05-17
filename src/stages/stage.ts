@@ -1,7 +1,7 @@
 import { ICharacter } from '../characters';
 import { Controller } from '../controller';
 import { Screen } from '../screen';
-import { requestAnimationFrame } from '../lib';
+import { Logger, requestAnimationFrame } from '../lib';
 
 export enum TileType {
   NULL = 'NULL',
@@ -26,7 +26,7 @@ export interface IStage {
 
   load: () => Promise<void>;
   getTile: (coordinates: TileCoordinates) => TileType;
-  render: (screen: Screen, elapsed: DOMHighResTimeStamp, character: ICharacter) => void;
+  render: (screen: Screen, elapsed: DOMHighResTimeStamp, character: ICharacter, controller: Controller) => void;
   play: (screen: Screen, controller: Controller, character: ICharacter) => Promise<void>;
 }
 
@@ -42,6 +42,14 @@ export class Stage implements IStage {
 
   private running: boolean;
 
+  // debugging
+  protected logger: Logger;
+  protected collisionTiles: Set<string>;
+  protected highlightTiles: boolean;
+  protected highlightCollisions: boolean;
+  protected drawController: boolean;
+  protected drawFramerate: boolean;
+
   constructor() {
     this.tileWidth = 16;
     this.tileHeight = 16;
@@ -53,6 +61,14 @@ export class Stage implements IStage {
     this.pixelHeight = this.tileHeight * this.gridHeight;
 
     this.running = false;
+
+    // debugging
+    this.logger = new Logger();
+    this.collisionTiles = new Set<string>();
+    this.highlightTiles = false;
+    this.highlightCollisions = false;
+    this.drawController = true;
+    this.drawFramerate = false;
   }
 
   async load(): Promise<void> {
@@ -88,18 +104,18 @@ export class Stage implements IStage {
   }
 
   processInput(controller: Controller, character: ICharacter) {
-    if (controller.action && character.grounded) {
-      if (controller.right) {
+    if (controller.actionPressed && character.grounded) {
+      if (controller.rightDown) {
         character.jumpRight();
-      } else if (controller.left) {
+      } else if (controller.leftDown) {
         character.jumpLeft();
       } else {
         character.jumpUp();
       }
       controller.releaseAction();
-    } else if (controller.right && character.grounded) {
+    } else if (controller.rightDown && character.grounded) {
       character.runRight();
-    } else if (controller.left && character.grounded) {
+    } else if (controller.leftDown && character.grounded) {
       character.runLeft();
     } else if (character.grounded && character.moving) {
       character.stop();
@@ -121,7 +137,7 @@ export class Stage implements IStage {
     if (character.vy > 0) {
       // going down
       while (this.getTile(character.tileBottom()) === TileType.SOLID) {
-        // this.collisionTiles.add(JSON.stringify(character.tileBottom()));
+        this.collisionTiles.add(JSON.stringify(character.tileBottom()));
 
         // move character above the tile
         character.moveTo(character.x, character.tileBottom().y - character.height);
@@ -130,7 +146,7 @@ export class Stage implements IStage {
     } else if (character.vy < 0) {
       // going up
       while (this.getTile(character.tileTop()) === TileType.SOLID) {
-        // this.collisionTiles.add(JSON.stringify(character.tileTop()));
+        this.collisionTiles.add(JSON.stringify(character.tileTop()));
 
         // move character below the tile
         character.moveTo(character.x, character.tileTop().y + character.height);
@@ -142,7 +158,7 @@ export class Stage implements IStage {
     if (character.vx > 0) {
       // going right
       while (this.getTile(character.tileRight()) === TileType.SOLID) {
-        // this.collisionTiles.add(JSON.stringify(character.tileRight()));
+        this.collisionTiles.add(JSON.stringify(character.tileRight()));
 
         // move character to the left of tile
         character.moveTo(character.tileRight().x - character.width, character.y);
@@ -151,7 +167,7 @@ export class Stage implements IStage {
     } else if (character.vx < 0) {
       // going left
       while (this.getTile(character.tileLeft()) === TileType.SOLID) {
-        // this.collisionTiles.add(JSON.stringify(character.tileLeft()));
+        this.collisionTiles.add(JSON.stringify(character.tileLeft()));
 
         // move character to the right of tile
         character.moveTo(character.tileLeft().x + character.width, character.y);
@@ -176,7 +192,7 @@ export class Stage implements IStage {
     }
   }
 
-  render(screen: Screen, elapsed: DOMHighResTimeStamp, character: ICharacter): void {
+  render(screen: Screen, elapsed: DOMHighResTimeStamp, character: ICharacter, controller: Controller): void {
     screen.drawRectangle(0, 0, this.pixelWidth, this.pixelHeight, { color: 'LightSkyBlue', fill: true });
     screen.drawRectangle(0, 14 * 16, this.pixelWidth, 1 * 16, { color: 'NavajoWhite', fill: true });
     character.render(screen, elapsed);
@@ -200,7 +216,7 @@ export class Stage implements IStage {
       this.processInput(controller, character);
       this.applyPhysics(elapsed, character);
       this.offsetScreen(screen, character);
-      this.render(screen, elapsed, character);
+      this.render(screen, elapsed, character, controller);
     }
   }
 }

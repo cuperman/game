@@ -58,14 +58,14 @@ export class CharacterMenu extends Menu {
   }
 
   processInput(controller: Controller): void {
-    if (controller.action || controller.start) {
+    if (controller.actionPressed || controller.startPressed) {
       this.select();
       controller.releaseAction();
       controller.releaseStart();
-    } else if (controller.left) {
+    } else if (controller.leftPressed) {
       this.cursorLeft();
       controller.releaseLeft();
-    } else if (controller.right) {
+    } else if (controller.rightPressed) {
       this.cursorRight();
       controller.releaseRight();
     }

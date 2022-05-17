@@ -2,49 +2,34 @@ import { Screen } from './screen';
 import { Logger } from './lib';
 
 export class Controller {
-  public up: boolean;
-  public down: boolean;
-  public left: boolean;
-  public right: boolean;
-  public action: boolean;
-  public start: boolean;
+  public upPressed: boolean;
+  public downPressed: boolean;
+  public leftPressed: boolean;
+  public rightPressed: boolean;
+  public actionPressed: boolean;
+  public startPressed: boolean;
+
+  public upDown: boolean;
+  public downDown: boolean;
+  public leftDown: boolean;
+  public rightDown: boolean;
+  public actionDown: boolean;
+  public startDown: boolean;
 
   private logger: Logger;
 
   constructor() {
-    this.up = false;
-    this.down = false;
-    this.left = false;
-    this.right = false;
-    this.action = false;
-    this.start = false;
+    this.upPressed = false;
+    this.upDown = false;
+
+    this.upPressed = false;
+    this.downPressed = false;
+    this.leftPressed = false;
+    this.rightPressed = false;
+    this.actionPressed = false;
+    this.startPressed = false;
 
     this.logger = new Logger();
-  }
-
-  onKeyUp(event: KeyboardEvent) {
-    this.logger.info(`key up: "${event.key}"`);
-
-    switch (event.key) {
-      case 'ArrowUp':
-        this.up = false;
-        break;
-      case 'ArrowDown':
-        this.down = false;
-        break;
-      case 'ArrowLeft':
-        this.left = false;
-        break;
-      case 'ArrowRight':
-        this.right = false;
-        break;
-      case ' ':
-        this.action = false;
-        break;
-      case 'Enter':
-        this.start = false;
-        break;
-    }
   }
 
   onKeyDown(event: KeyboardEvent) {
@@ -56,48 +41,85 @@ export class Controller {
 
     switch (event.key) {
       case 'ArrowUp':
-        this.up = true;
+        this.upDown = true;
+        this.upPressed = true;
         break;
       case 'ArrowDown':
-        this.down = true;
+        this.downDown = true;
+        this.downPressed = true;
         break;
       case 'ArrowLeft':
-        this.left = true;
+        this.leftDown = true;
+        this.leftPressed = true;
         break;
       case 'ArrowRight':
-        this.right = true;
+        this.rightDown = true;
+        this.rightPressed = true;
         break;
       case ' ':
-        this.action = true;
+        this.actionDown = true;
+        this.actionPressed = true;
         break;
       case 'Enter':
-        this.start = true;
+        this.startDown = true;
+        this.startPressed = true;
+        break;
+    }
+  }
+
+  onKeyUp(event: KeyboardEvent) {
+    this.logger.info(`key up: "${event.key}"`);
+
+    switch (event.key) {
+      case 'ArrowUp':
+        this.upDown = false;
+        this.upPressed = false;
+        break;
+      case 'ArrowDown':
+        this.downDown = false;
+        this.downPressed = false;
+        break;
+      case 'ArrowLeft':
+        this.leftDown = false;
+        this.leftPressed = false;
+        break;
+      case 'ArrowRight':
+        this.rightDown = false;
+        this.rightPressed = false;
+        break;
+      case ' ':
+        this.actionDown = false;
+        this.actionPressed = false;
+        break;
+      case 'Enter':
+        this.startDown = false;
+        this.startPressed = false;
         break;
     }
   }
 
   releaseUp() {
-    this.up = false;
+    this.upPressed = false;
   }
 
   releaseDown() {
-    this.down = false;
+    this.downPressed = false;
   }
 
   releaseLeft() {
-    this.left = false;
+    this.leftPressed = false;
   }
 
   releaseRight() {
-    this.right = false;
+    this.rightPressed = false;
   }
 
   releaseAction() {
-    this.action = false;
+    this.actionPressed = false;
   }
 
   releaseStart() {
-    this.start = false;
+    this.startPressed = false;
   }
 
   render(screen: Screen) {
@@ -118,27 +140,27 @@ export class Controller {
     screen.drawRectangle(screen.width - btnW * 7, btnH * 1, btnW * 3, btnH, { color });
 
     // up fill
-    if (this.up) {
+    if (this.upDown) {
       screen.drawRectangle(screen.width - btnW * 2, btnH * 0, btnW, btnH, { color, fill: true });
     }
 
     // down fill
-    if (this.down) {
+    if (this.downDown) {
       screen.drawRectangle(screen.width - btnW * 2, btnH * 1, btnW, btnH, { color, fill: true });
     }
 
     // left fill
-    if (this.left) {
+    if (this.leftDown) {
       screen.drawRectangle(screen.width - btnW * 3, btnH * 1, btnW, btnH, { color, fill: true });
     }
 
     // right fill
-    if (this.right) {
+    if (this.rightDown) {
       screen.drawRectangle(screen.width - btnW * 1, btnH * 1, btnW, btnH, { color, fill: true });
     }
 
     // action fill
-    if (this.action) {
+    if (this.actionDown) {
       screen.drawRectangle(screen.width - btnW * 7, btnH * 1, btnW * 3, btnH, { color, fill: true });
     }
   }
